@@ -1,0 +1,19 @@
+{
+  "name": "piece_maker",
+  "version": "1.0.0",
+  "description": "A software for auto part dealers",
+  "repository": 
+  {
+    "url": "https://github.com/GLR21/piece_maker.git"
+  },
+  "main": "index.js",
+  "scripts": 
+  {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^17.1.0"
+  }
+}
