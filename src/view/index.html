@@ -1,35 +1,55 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	{libs}
+	
 	<title>Document</title>
 </head>
 <body>
-	<h1 style="display: block" >Cadastro de Contatos</h1>
-	<form id="contato_form" >
-		<input type="text" id="name">
-		<input type="text" id="phone">
-		<input type="submit" value="save">
-	</form>
-	<script>
+	<nav class="navbar navbar-expand-sm bg-light">
+		<div class="container-fluid">
+			<ul class="nav nav-pills">
+				<li class="nav-item">
+					<a class="nav-link active" href="#">Cadastro de Contatos</a>
+				  </li>
+				<li class="nav-item">
+				  <a class="nav-link" href="../libs/lib.html">Lista de contatos</a>
+				</li>
+			  </ul>
+		</div>
+	</nav>
 
-		const electron = require('electron');
-		const { ipcRenderer } = electron;
-		const Contato  = require( '../objects/Contato.js' );
-		const form = document.getElementById( 'contato_form' );
+	<div class="container-fluid">
+		<div class="row">
+			<div class="offset-md-4 col-md-4">
+				<h2>
+					Contatos
+				</h2>
+				<hr>
+				<form id="contato_form">
+					<div class="form-group">
+						<label for="contact_name" class="form-label">
+							Nome:
+						</label>
+						<input name="contact_name" type="text" id="name" class="form-control">
+					</div>
 
-		form.addEventListener('submit', submitForm );
+					<div class="form-group">
+						<label for="contact_phone" class="form-label">
+							Telefone
+						</label>
+						<input name="contact_phone" type="text" id="phone" class="form-control">
+					</div>
 
-		function submitForm( e )
-		{
-			e.preventDefault();
-			const name  = document.getElementById( 'name' ).value;
-			const phone = document.getElementById( 'phone' ).value;
-			const contato = new Contato( name, phone );
-			ipcRenderer.send( 'contato:save', contato );
-			form.reset();
-		}
-	</script>
+					<div class="form-group" ><button type="submit" class="form-control btn-success green mt-2" >Salvar</button></div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	{save_contacts}
 </body>
 </html>

@@ -2,19 +2,21 @@
   "name": "piece_maker",
   "version": "1.0.0",
   "description": "A software for auto part dealers",
-  "repository": 
-  {
+  "repository": {
     "url": "https://github.com/GLR21/piece_maker.git"
   },
   "main": "src/main.js",
-  "scripts": 
-  {
+  "scripts": {
     "start": "electron ."
   },
   "author": "Gabriel Lange Ramos",
   "license": "ISC",
-  "devDependencies": 
-  {
+  "devDependencies": {
     "electron": "^17.1.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.1.3",
+    "jquery": "^3.6.0",
+    "popper": "^1.0.1"
   }
 }

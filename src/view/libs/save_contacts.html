@@ -1,0 +1,19 @@
+<script>
+
+	const electron = require('electron');
+	const { ipcRenderer } = electron;
+	const Contato  = require( '../../objects/Contato.js' );
+	const form = document.getElementById( 'contato_form' );
+
+	form.addEventListener('submit', submitForm );
+
+	function submitForm( e )
+	{
+		e.preventDefault();
+		const name  = document.getElementById( 'name' ).value;
+		const phone = document.getElementById( 'phone' ).value;
+		const contato = new Contato( name, phone );
+		ipcRenderer.send( 'contato:save', contato );
+		form.reset();
+	}
+</script>

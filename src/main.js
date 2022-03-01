@@ -2,6 +2,8 @@ const electron = require('electron');
 const { app, BrowserWindow , ipcMain } = electron ;
 const ContatoController = require('./controller/ContatoController.js');
 const contatoController = new ContatoController();
+const util = require('./util/JUtil.js');
+
 
 
 app.whenReady().then
@@ -21,8 +23,21 @@ app.whenReady().then
 				
 			}
 		);
+		
 
-		win.loadFile( 'src/view/index.html' );
+		replaces = 
+		[
+			{
+				"key"   : "{libs}",
+				"value" : util.getFileContents( 'src/view/libs/lib.html' )
+			},
+			{
+				"key"   : "{save_contacts}",
+				"value" : util.getFileContents( 'src/view/libs/save_contacts.html' )
+			}
+		];
+
+		win.loadFile( util.writeFile( "src/view/tmp/index_tmp.html" , util.replaceContents( util.getFileContents( 'src/view/index.html' ), replaces ))   );
 	}
 )
 
