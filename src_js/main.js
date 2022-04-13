@@ -46,3 +46,10 @@ ipcMain.on('edit:list:pessoas', (err, res) => __awaiter(void 0, void 0, void 0, 
         win.webContents.send('edit:pessoa', res);
     });
 }));
+ipcMain.on('lista:pessoa:delete', (err, item) => __awaiter(void 0, void 0, void 0, function* () {
+    transaction = new PessoaFisicaTransaction_1.PessoaFisicaTransaction();
+    yield transaction.delete(item).then((res) => {
+        console.log(res);
+        win.webContents.send('lista:pessoa:delete:response', res);
+    });
+}));

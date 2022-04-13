@@ -63,3 +63,17 @@ ipcMain.on( 'edit:list:pessoas', async( err, res )=>
 		win.webContents.send( 'edit:pessoa', res );
 	} );
 } );
+
+
+ipcMain.on( 'lista:pessoa:delete', async( err ,item )=>
+{	
+	transaction = new PessoaFisicaTransaction();
+	await transaction.delete( item ).then
+	(
+		( res )=>
+		{
+			console.log( res );
+			win.webContents.send( 'lista:pessoa:delete:response', res );
+		}
+	);
+} );

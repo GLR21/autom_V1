@@ -71,19 +71,34 @@
 					item.forEach( element => 
 					{
 						var row = document.createElement( 'TR' );
-						var icon      = document.createElement( 'i' );
+						var icon        = document.createElement( 'i' );
+						var icon_delete = document.createElement( 'i' );
 						$( icon ).addClass( 'fas fa-edit' );
 						$( icon ).attr( 'style', 'color: #00d1b2;pointer-events: all;cursor: pointer;'  );
 						$( icon ).attr( 'id', `${element.id}` );
 						$( icon ).attr( 'onclick', 'onEdit(this)' );
 
-						var th_button = document.createElement( 'TD' );
+						$( icon_delete ).addClass( 'fa fa-trash' );
+						$( icon_delete ).attr( 'style', 'color: #FF3860;pointer-events: all;cursor: pointer;'  );
+						$( icon_delete ).attr( 'id', `${element.id}_delete` );
+						$( icon_delete ).attr( 'onclick', 'onDelete(this)' );
+
+						var th_button  = document.createElement( 'TH' );
+						var td_edit    = document.createElement( 'TD' );
+						$( td_edit ).attr( 'style', 'border:none;' )
+						td_edit.appendChild( icon );
+
+						var td_delete  = document.createElement( 'TD' );
+						$( td_delete ).attr( 'style', 'border:none;' )
+						td_delete.appendChild( icon_delete );
+
 						var th_codigo = document.createElement( 'TH' );
 						var td_nome   = document.createElement( 'TD' );
 						var td_email   = document.createElement( 'TD' );
 						var td_telefone   = document.createElement( 'TD' );
 
-						th_button.appendChild( icon );
+						th_button.appendChild( td_edit );
+						th_button.appendChild( td_delete );
 						th_codigo.innerText   = element.id;
 						td_nome.innerText     = element.nome;
 						td_email.innerText    = element.email;
@@ -96,7 +111,22 @@
 						row.appendChild( td_telefone );
 						tbody.append( row );
 					});
-				} )
+				} );
+
+				ipcRenderer.on( 'lista:pessoa:delete:response', ( err, res )=>
+				{
+					console.log( res );
+					if( res )
+					{
+						bulmaToast.toast({ message: 'Registro deletado com sucesso com sucesso', type: 'is-success', duration: 5000, closeOnClick: true, offsetTop: 15 });
+						setTimeout( ()=>{ location.reload() } , 4500 );
+					}
+					else
+					{
+						bulmaToast.toast({ message: 'Ocorreu um erro, favor entrar em contato com o suporte.', type: 'is-danger', duration: 3500, closeOnClick: true, offsetTop: 15 });
+						main_form.reset();
+					}
+				} );
 			}
 		)
 
@@ -104,6 +134,14 @@
 		{
 			location.assign( `index.html?pessoa_id=${$( id ).attr( 'id' )}` );
 		}
+
+		function onDelete( id )
+		{
+			ipcRenderer.send( 'lista:pessoa:delete', $( id ).attr( 'id' ).replace( '_delete', '' ) );
+		}
+
+
+		
 	</script>
 </body>
 </html>

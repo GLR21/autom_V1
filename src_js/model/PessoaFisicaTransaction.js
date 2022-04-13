@@ -90,5 +90,18 @@ class PessoaFisicaTransaction {
             }).catch((err) => { console.log(err); }).finally(() => { this.client.end(); console.log('connection closed'); });
         });
     }
+    delete(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let delete_query = `DELETE FROM pm_pessoa where id=${id}`;
+            this.client.query(delete_query).then(() => {
+                return true;
+            }).catch((err) => {
+                console.log(err);
+            }).finally(() => {
+                this.client.end();
+                console.log('connection closed');
+            });
+        });
+    }
 }
 exports.PessoaFisicaTransaction = PessoaFisicaTransaction;
