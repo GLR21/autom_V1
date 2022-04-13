@@ -34,7 +34,7 @@ class JUtil
 		return JSON.parse( fs.readFileSync( 'resources/db.json' ).toString() );
 	}
 
-	static hashString( string_to_hash:string, algorithm_type:string )
+	static hashString( string_to_hash:any, algorithm_type:string )
 	{
 		return crypto.createHmac(  algorithm_type, Buffer.from(  string_to_hash  ).toString('utf8') ).digest( 'hex' );
 	}

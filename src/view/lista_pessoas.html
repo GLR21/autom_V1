@@ -21,7 +21,7 @@
 		</div>
 		<div class="navbar-menu">
 			<div class="navbar-start">
-				<a href="index.html" class="navbar-item is-active">
+				<a href="index.html" class="navbar-item">
 					Cadastro de pessoas
 				</a>
 				<a href="lista_pessoas.html" class="navbar-item">
@@ -119,7 +119,7 @@
 					if( res )
 					{
 						bulmaToast.toast({ message: 'Registro deletado com sucesso com sucesso', type: 'is-success', duration: 5000, closeOnClick: true, offsetTop: 15 });
-						setTimeout( ()=>{ location.reload() } , 4500 );
+						setTimeout( ()=>{ location.reload() } , 250 );
 					}
 					else
 					{

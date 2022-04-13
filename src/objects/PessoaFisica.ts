@@ -7,11 +7,11 @@ class PessoaFisica
     id  : Number|null;
     nome: string;
     email: string;
-    senha: string;
+    senha: string|null;
     telefone: string;
     sys_auth: Number;
 
-    constructor( id:Number|null = null, nome:string, email:string, senha:string, telefone:string, sys_auth:Number = 2, cpf:string = '' )
+    constructor( id:Number|null = null, nome:string, email:string, senha:string|null, telefone:string, sys_auth:Number = 2, cpf:string = '' )
     {
         this.id   = id;
         this.nome = nome;

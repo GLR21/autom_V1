@@ -20,7 +20,7 @@
 		</div>
 		<div class="navbar-menu">
 			<div class="navbar-start">
-				<a href="" class="navbar-item is-active">
+				<a href="" class="navbar-item">
 					Cadastro de pessoas
 				</a>
 				<a href="lista_pessoas.html" class="navbar-item">
@@ -41,7 +41,7 @@
 				</div>
 				<div class="field" >
 					<div class="control" >
-						<input name="pessoa_nome" container="body" type="text" id="pessoa_nome" placeholder="Nome" class="input">
+						<input name="pessoa_nome" container="body" type="text" id="pessoa_nome" placeholder="Nome" class="input"/>
 						<p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p>
 					</div
 				</div>
@@ -142,13 +142,25 @@
 				( e )=>
 				{
 					e.preventDefault();
-					const array_validation = 
+
+					//If false, enable password validation. If true, then thas a edition and the user can save or not another password.
+					var validate_save_pass = isPasswordEdition();
+					
+					var array_validation = 
 					{
 						input_name  :   name,
 						input_email :   email,
 						input_phone :   phone,
 						input_password: password
 					};
+
+					if( validate_save_pass )
+					{
+						delete array_validation.input_password;
+					}
+
+					console.log( array_validation );
+
 					if( validate( array_validation, iti ) )
 					{
 						$(main_form).submit();
@@ -167,6 +179,12 @@
 					telefone:iti.getNumber(),
 					sys_auth:$("#is_admin").val()
 				}
+
+				if( isPasswordEdition() )
+				{
+					pessoa.senha = null;
+				}
+				console.log( pessoa );
 				ipcRenderer.send('pessoa:add',pessoa);
 			} );
 
@@ -215,6 +233,12 @@
 			$('#is_admin').prop('checked', res.sys_auth == 1 ?? false );
 			$( '#pessoa_id_field' ).show();
 		} );
+
+		function isPasswordEdition()
+		{
+			return $( '#pessoa_id' ).val() != '' && $('#pessoa_senha').val() == '';
+		}
+
 	</script>
 </body>
 </html>

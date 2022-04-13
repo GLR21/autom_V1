@@ -21,17 +21,18 @@ class PessoaFisicaTransaction {
     store(pessoa) {
         return __awaiter(this, void 0, void 0, function* () {
             let insert;
-            console.log(pessoa.id);
             if (pessoa.id != null) {
                 insert = `UPDATE 
                         pm_pessoa 
-                            set 
-                                nome='${pessoa.nome}',
-                                email='${pessoa.email}',
-                                senha='${JUtil_1.JUtil.hashString(pessoa.senha, JUtil_1.JUtil.SHA256)}',
-                                telefone='${pessoa.telefone}',
-                                sys_auth=${pessoa.sys_auth} 
-                            where id=${pessoa.id}`;
+                            set `;
+                insert += `nome='${pessoa.nome}',`;
+                insert += `email='${pessoa.email}',`;
+                if (pessoa.senha != null) {
+                    insert += `senha='${JUtil_1.JUtil.hashString(pessoa.senha, JUtil_1.JUtil.SHA256)}',`;
+                }
+                insert += `telefone='${pessoa.telefone}',`;
+                insert += `sys_auth=${pessoa.sys_auth} `;
+                insert += ` where id=${pessoa.id}`;
             }
             else {
                 insert = `INSERT INTO 
@@ -93,7 +94,7 @@ class PessoaFisicaTransaction {
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let delete_query = `DELETE FROM pm_pessoa where id=${id}`;
-            this.client.query(delete_query).then(() => {
+            return yield this.client.query(delete_query).then(() => {
                 return true;
             }).catch((err) => {
                 console.log(err);

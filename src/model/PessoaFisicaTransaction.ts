@@ -18,18 +18,22 @@ class PessoaFisicaTransaction
     async store( pessoa:Pessoa)
     {
         let insert;
-        console.log( pessoa.id );
+        
         if( pessoa.id != null )
         {
             insert = `UPDATE 
                         pm_pessoa 
-                            set 
-                                nome='${pessoa.nome}',
-                                email='${pessoa.email}',
-                                senha='${JUtil.hashString( pessoa.senha, JUtil.SHA256 )}',
-                                telefone='${pessoa.telefone}',
-                                sys_auth=${pessoa.sys_auth} 
-                            where id=${pessoa.id}`
+                            set `;
+            
+            insert+= `nome='${pessoa.nome}',`;
+            insert+= `email='${pessoa.email}',`;
+            if( pessoa.senha != null )
+            {
+                insert+= `senha='${JUtil.hashString( pessoa.senha, JUtil.SHA256 )}',`;
+            }
+            insert+=`telefone='${pessoa.telefone}',`;
+            insert+=`sys_auth=${pessoa.sys_auth} `;
+            insert+= ` where id=${pessoa.id}`;
         }
         else
         {
@@ -124,7 +128,7 @@ class PessoaFisicaTransaction
     {
         let delete_query = `DELETE FROM pm_pessoa where id=${id}`;
 
-        this.client.query( delete_query ).then( 
+        return await this.client.query( delete_query ).then( 
             ()=>
             {
                 return true;      
