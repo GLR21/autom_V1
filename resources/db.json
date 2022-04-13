@@ -1,0 +1,7 @@
+{
+	"user"     : "piece_maker",
+	"password" : "piece_maker",
+	"database" : "piece_maker",
+	"port"     : 5432,
+	"host"     : "localhost"
+}

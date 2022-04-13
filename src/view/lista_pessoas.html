@@ -1,0 +1,109 @@
+<html lang="pt-BR" style="overflow-y: hidden;">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="../../node_modules/intl-tel-input/build/css/intlTelInput.css">
+	<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
+	<link rel="stylesheet" href="../../node_modules/bulma-extensions/bulma-switch/dist/css/bulma-switch.min.css">
+	<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+	<title>Autom</title>
+</head>
+<body>
+	<nav class="navbar has-shadow is-primary">
+		<div class="navbar-brand">
+			<a href="" class="navbar-item" style="cursor: none;pointer-events: none;user-select: none;">
+				<figure class="is-rounded">
+					<img src="../../resources/images/logo.png" alt="">
+				</figure>
+			</a>
+		</div>
+		<div class="navbar-menu">
+			<div class="navbar-start">
+				<a href="index.html" class="navbar-item is-active">
+					Cadastro de pessoas
+				</a>
+				<a href="lista_pessoas.html" class="navbar-item">
+					Pessoas
+				</a>
+			</div>
+		</div>
+	</nav>
+
+	<table class="table is-fullwidth is-hoverable">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Cód.</th>
+				<th>Nome</th>
+				<th>Email</th>
+				<th></i>Telefone</th>
+			</tr>
+		</thead>
+		<tbody id="lista_pessoas_body">
+			
+		</tbody>
+	</table>
+	<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+	<script>
+		window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
+		window.$ = window.jQuery;
+	</script>
+	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
+	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
+	<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
+	<script src="../../resources/JS/view.js"></script>
+	<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
+	<script>
+		const electron = require('electron');
+		const { ipcRenderer } = electron;
+
+		$( document ).ready
+		(
+			()=>
+			{
+				ipcRenderer.send( 'load:lista:pessoas' );
+				ipcRenderer.on( 'load:lista:pessoas:success', ( err,item )=>
+				{
+					let tbody = $( '#lista_pessoas_body' );
+
+					item.forEach( element => 
+					{
+						var row = document.createElement( 'TR' );
+						var icon      = document.createElement( 'i' );
+						$( icon ).addClass( 'fas fa-edit' );
+						$( icon ).attr( 'style', 'color: #00d1b2;pointer-events: all;cursor: pointer;'  );
+						$( icon ).attr( 'id', `${element.id}` );
+						$( icon ).attr( 'onclick', 'onEdit(this)' );
+
+						var th_button = document.createElement( 'TD' );
+						var th_codigo = document.createElement( 'TH' );
+						var td_nome   = document.createElement( 'TD' );
+						var td_email   = document.createElement( 'TD' );
+						var td_telefone   = document.createElement( 'TD' );
+
+						th_button.appendChild( icon );
+						th_codigo.innerText   = element.id;
+						td_nome.innerText     = element.nome;
+						td_email.innerText    = element.email;
+						td_telefone.innerText = element.telefone;
+
+						row.appendChild(  th_button ); 
+						row.appendChild( th_codigo );
+						row.appendChild( td_nome );
+						row.appendChild( td_email );
+						row.appendChild( td_telefone );
+						tbody.append( row );
+					});
+				} )
+			}
+		)
+
+		function onEdit( id )
+		{
+			location.assign( `index.html?pessoa_id=${$( id ).attr( 'id' )}` );
+		}
+	</script>
+</body>
+</html>

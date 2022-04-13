@@ -1,55 +1,220 @@
-<html lang="en">
+<html lang="pt-BR" style="overflow-y: hidden;">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	
-	{libs}
-	
-	<title>Document</title>
+	<link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="../../node_modules/intl-tel-input/build/css/intlTelInput.css">
+	<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
+	<link rel="stylesheet" href="../../node_modules/bulma-extensions/bulma-switch/dist/css/bulma-switch.min.css">
+	<title>Autom</title>
 </head>
-<body>
-	<nav class="navbar navbar-expand-sm bg-light">
-		<div class="container-fluid">
-			<ul class="nav nav-pills">
-				<li class="nav-item">
-					<a class="nav-link active" href="#">Cadastro de Contatos</a>
-				  </li>
-				<li class="nav-item">
-				  <a class="nav-link" href="../libs/lib.html">Lista de contatos</a>
-				</li>
-			  </ul>
+<body >
+	<nav class="navbar has-shadow is-primary">
+		<div class="navbar-brand">
+			<a href="" class="navbar-item" style="cursor: none;pointer-events: none;user-select: none;">
+				<figure class="is-rounded">
+					<img src="../../resources/images/logo.png" alt="">
+				</figure>
+			</a>
+		</div>
+		<div class="navbar-menu">
+			<div class="navbar-start">
+				<a href="" class="navbar-item is-active">
+					Cadastro de pessoas
+				</a>
+				<a href="lista_pessoas.html" class="navbar-item">
+					Pessoas
+				</a>
+			</div>
 		</div>
 	</nav>
 
-	<div class="container-fluid">
-		<div class="row">
-			<div class="offset-md-4 col-md-4">
-				<h2>
-					Contatos
-				</h2>
-				<hr>
-				<form id="contato_form">
-					<div class="form-group">
-						<label for="contact_name" class="form-label">
-							Nome:
-						</label>
-						<input name="contact_name" type="text" id="name" class="form-control">
+	<div class="container">
+		<div class="column is-half is-offset-one-quarter">
+			<h2 class="title" >Cadastro de pessoas</h2>
+			<form id="pessoa_form">
+				<div id="pessoa_id_field" class="field">
+					<div class="control">
+						<input type="text" name="pessoa_id" id="pessoa_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
 					</div>
-
-					<div class="form-group">
-						<label for="contact_phone" class="form-label">
-							Telefone
-						</label>
-						<input name="contact_phone" type="text" id="phone" class="form-control">
+				</div>
+				<div class="field" >
+					<div class="control" >
+						<input name="pessoa_nome" container="body" type="text" id="pessoa_nome" placeholder="Nome" class="input">
+						<p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p>
+					</div
+				</div>
+				<div class="field mt-2">
+					<div class="control">
+						<input name="pessoa_email" type="text" id="pessoa_email" placeholder="Email" class="input">
+						<p id="pessoa_email_help" class="help">Este campo não pode ser vazio e deve ser um email válido</p>
 					</div>
-
-					<div class="form-group" ><button type="submit" class="form-control btn-success green mt-2" >Salvar</button></div>
-				</form>
-			</div>
+				</div>
+				<div class="field has-addons">
+					<div class="control has-icons-right is-expanded">
+						<input name="pessoa_senha" type="password" id="pessoa_senha" placeholder="Senha" class="input">
+						<span class="icon is-right">
+							<i style="pointer-events: all;cursor: pointer;" class="bi bi-eye-slash"  id="togglePassword"></i>
+						</span>
+						<p id="pessoa_senha_help" class="help">Este campo não deve ser vazio. Deve conter no mínimo: um caractere maiúsculo, um caractere especial, um caractere minúsculo e ter um tamanho mínimo de 8 caracteres</p>
+					</div>
+				</div>
+				<div class="field is-expanded">
+					<div class="control is-expanded">
+						<input name="pessoa_telefone" type="text" id="pessoa_telefone" class="input" >
+						<p id="pessoa_telefone_help" class="help">Este campo não pode ser vazio e deve ser um número de telefone válido</p>
+					</div>
+				</div>
+				<div class="field">
+					<input id="is_admin" type="checkbox" name="is_admin" value="false" class="switch">
+					<label for="is_admin">Definir usuário como administrador?</label>
+				</div>
+				<div class="field" >
+					<button id="submit" type="button" class="button is-success is-responsive mt-2" >Salvar</button>
+				</div>
+			</form>
 		</div>
 	</div>
+	<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+	<script>
+		window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
+		window.$ = window.jQuery;
+	</script>
+	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
+	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
+	<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
+	<script src="../../resources/JS/view.js"></script>
+	<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
+	<script >
+		const electron = require('electron');
+		const { ipcRenderer } = electron;
+		const main_form  = document.getElementById( 'pessoa_form' );
+		const name       = document.getElementById( 'pessoa_nome' );
+		const email      = document.getElementById( 'pessoa_email' );
+		const phone      = document.getElementById( 'pessoa_telefone' );
+		const password   = document.getElementById( 'pessoa_senha' );
+		const is_admin   = document.getElementById( 'is_admin' );
+		const tooglePassword = document.getElementById('togglePassword');
+		const queryVariables = new URLSearchParams(window.location.search);
+
+		$( document ).ready( function()
+		{
+			$( '#pessoa_id_field' ).hide();
+			//Loads flag number input
+			const iti = window.intlTelInput(phone, 
+			{
+				utilsScript: "../../node_modules/intl-tel-input/build/js/utils.js",
+				separateDialCode : true,
+				autoPlaceholder: "polite",
+				formatOnDisplay : true, 
+				nationalMode: true,
+				preferredCountries : ["br", "pt" ,"us"],
+				responsiveDropdown : true
+			});
+
+			//Add listener to eye icon to change password view
+			tooglePassword.addEventListener( 'click',  function()
+			{
+				const type = password.getAttribute('type') === "password" ? "text" : "password";
+				password.setAttribute( "type", type );
+				this.classList.toggle( 'bi-eye' );
+			}  );
+
+
+			//Filter only numbers in number input
+			setInputFilter(phone, function(value)
+			{
+				return /^-?\d*$/.test(value); 
+			});
+
+			//Hide help elements
+			Array.from( main_form.getElementsByTagName( 'input' ) ).forEach
+			( 
+				el =>
+				{
+					$( `#${el.id}_help` ).hide();
+				}
+			);
+
+			$('#submit').click
+			(
+				( e )=>
+				{
+					e.preventDefault();
+					const array_validation = 
+					{
+						input_name  :   name,
+						input_email :   email,
+						input_phone :   phone,
+						input_password: password
+					};
+					if( validate( array_validation, iti ) )
+					{
+						$(main_form).submit();
+					}	
+				}
+			);
+
+			$(main_form).on( 'submit', (e)=>
+			{
+				const pessoa = 
+				{
+					id  : $( '#pessoa_id' ).val() != '' ? $( '#pessoa_id' ).val(): null,
+					nome:$( name ).val(),
+					email:$( email ).val(),
+					senha:$( password ).val(),
+					telefone:iti.getNumber(),
+					sys_auth:$("#is_admin").val()
+				}
+				ipcRenderer.send('pessoa:add',pessoa);
+			} );
+
+			$("#is_admin").change
+			(
+				function()
+				{
+    				if( this.checked )
+					{
+						$(this).attr( 'value', 'true' );
+					}
+					else
+					{
+						$(this).attr( 'value', 'false' );
+					}
+				} 
+			);
+				
+			if(queryVariables.get('pessoa_id'))
+			{
+				ipcRenderer.send( 'edit:list:pessoas', queryVariables.get('pessoa_id')  );
+			}
+		} );
 	
-	{save_contacts}
+		ipcRenderer.on( 'pessoa:add:success', ( err, item )=>
+		
+		{
+			if( item )
+			{
+				bulmaToast.toast({ message: 'Registro salvo com sucesso', type: 'is-success', duration: 4000, closeOnClick: true, offsetTop: 15 });
+				setTimeout( location.assign( 'lista_pessoas.html' ), 4500 );
+			}
+			else
+			{
+				bulmaToast.toast({ message: 'Ocorreu um erro, favor entrar em contato com o suporte.', type: 'is-danger', duration: 3500, closeOnClick: true, offsetTop: 15 });
+				main_form.reset();
+			}
+		} );
+
+		ipcRenderer.on( 'edit:pessoa', ( err, res )=>
+		{
+			$( '#pessoa_id' ).val( res.id );
+			$( '#pessoa_nome' ).val( res.nome );
+			$( '#pessoa_email' ).val( res.email );
+			$( '#pessoa_telefone' ).val( res.telefone );
+			$('#is_admin').prop('checked', res.sys_auth == 1 ?? false );
+			$( '#pessoa_id_field' ).show();
+		} );
+	</script>
 </body>
 </html>
