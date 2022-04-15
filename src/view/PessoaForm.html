@@ -173,8 +173,7 @@
 						delete array_validation.input_password;
 					}
 
-					console.log( array_validation );
-
+					console.log( $("#is_admin").val() );
 					if( validate( array_validation, iti ) )
 					{
 						$(main_form).submit();
@@ -244,7 +243,8 @@
 			$( '#pessoa_nome' ).val( res.nome );
 			$( '#pessoa_email' ).val( res.email );
 			$( '#pessoa_telefone' ).val( res.telefone );
-			$('#is_admin').prop('checked', res.sys_auth == 1 ?? false );
+			$('#is_admin').prop('checked', res.sys_auth == process.env.PM_AUTH_ADMIN ?? false );
+			$('#is_admin').attr( 'value', res.sys_auth == process.env.PM_AUTH_ADMIN ?? false );
 			$( '#pessoa_id_field' ).show();
 		} );
 
