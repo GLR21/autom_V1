@@ -24,7 +24,7 @@
 				<a href="PessoaForm.html" class="navbar-item">
 					Cadastro de pessoas
 				</a>
-				<a href="lista_pessoas.html" class="navbar-item">
+				<a href="PessoaList.html" class="navbar-item">
 					Pessoas
 				</a>
 			</div>
@@ -70,20 +70,22 @@
 
 					item.forEach( element => 
 					{
-						var row = document.createElement( 'TR' );
 						var icon        = document.createElement( 'i' );
-						var icon_delete = document.createElement( 'i' );
 						$( icon ).addClass( 'fas fa-edit' );
 						$( icon ).attr( 'style', 'color: #00d1b2;pointer-events: all;cursor: pointer;'  );
 						$( icon ).attr( 'id', `${element.id}` );
 						$( icon ).attr( 'onclick', 'onEdit(this)' );
 
+						var icon_delete = document.createElement( 'i' );
 						$( icon_delete ).addClass( 'fa fa-trash' );
 						$( icon_delete ).attr( 'style', 'color: #FF3860;pointer-events: all;cursor: pointer;'  );
 						$( icon_delete ).attr( 'id', `${element.id}_delete` );
-						$( icon_delete ).attr( 'onclick', 'onDelete(this)' );
-
-						var th_button  = document.createElement( 'TH' );
+						$( icon_delete ).attr( 'onclick', 'onDelete(this)' );						
+						
+						var p_nome      = document.createElement( 'p');
+						$( p_nome ).addClass( 'ml-2' );
+						$( p_nome ).append( element.nome );
+						
 						var td_edit    = document.createElement( 'TD' );
 						$( td_edit ).attr( 'style', 'border:none;' )
 						td_edit.appendChild( icon );
@@ -92,23 +94,37 @@
 						$( td_delete ).attr( 'style', 'border:none;' )
 						td_delete.appendChild( icon_delete );
 
-						var th_codigo = document.createElement( 'TH' );
-						var td_nome   = document.createElement( 'TD' );
-						var td_email   = document.createElement( 'TD' );
-						var td_telefone   = document.createElement( 'TD' );
-
+						var th_button  = document.createElement( 'TH' );
 						th_button.appendChild( td_edit );
 						th_button.appendChild( td_delete );
+						
+						var th_codigo = document.createElement( 'TH' );
 						th_codigo.innerText   = element.id;
-						td_nome.innerText     = element.nome;
+						
+						var th_nome    = document.createElement( 'TH' );
+						$( th_nome ).append( p_nome );
+						
+						if( element.sys_auth == process.env.PM_AUTH_ADMIN )
+						{
+							var admin_icon = document.createElement( 'I' );
+							$( admin_icon ).addClass( 'fa-solid fa-crown ml-2' );
+							$( admin_icon ).attr( 'style', 'color:  #ffd700' );
+							$( admin_icon ).appendTo( p_nome );
+						}
+						
+						var td_email   = document.createElement( 'TD' );
 						td_email.innerText    = element.email;
+						
+						var td_telefone   = document.createElement( 'TD' );
 						td_telefone.innerText = element.telefone;
 
-						row.appendChild(  th_button ); 
+						var row = document.createElement( 'TR' );
+						row.appendChild( th_button ); 
 						row.appendChild( th_codigo );
-						row.appendChild( td_nome );
+						row.appendChild( th_nome );
 						row.appendChild( td_email );
 						row.appendChild( td_telefone );
+
 						tbody.append( row );
 					});
 				} );

@@ -1,6 +1,7 @@
 const electron = require('electron');
 const { app, BrowserWindow , ipcMain } = electron ;
 import { JUtil  } from "./util/JUtil";
+import 'dotenv/config'
 import { PessoaFisica } from "./objects/PessoaFisica";
 import { PessoaFisicaTransaction } from "./model/PessoaFisicaTransaction";
 const util = JUtil;

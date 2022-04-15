@@ -96,7 +96,7 @@ class PessoaFisicaTransaction
 
                 res.rows.forEach(element => 
                 {
-                    array_pessoa.push( new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone  )  );
+                    array_pessoa.push( new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth  )  );
                 });
 
                 return array_pessoa

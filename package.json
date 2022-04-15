@@ -7,7 +7,8 @@
   },
   "main": "src_js/main.js",
   "scripts": {
-    "start": "npx tsc -p . | electron ."
+    "start": "electron .",
+    "build": "npx tsc -p ."
   },
   "author": "Gabriel Lange Ramos",
   "license": "ISC",
@@ -24,6 +25,7 @@
     "bulma": "^0.9.3",
     "bulma-extensions": "^6.2.7",
     "bulma-toast": "^2.4.1",
+    "dotenv": "^16.0.0",
     "intl-tel-input": "^17.0.16",
     "jquery": "^3.6.0",
     "mdb-ui-kit": "^3.11.0",
