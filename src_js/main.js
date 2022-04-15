@@ -24,7 +24,7 @@ app.whenReady().then(() => {
             contextIsolation: false
         }
     });
-    win.loadFile("src/view/index.html");
+    win.loadFile("src/view/PessoaForm.html");
     win.maximize();
 });
 ipcMain.on('pessoa:add', (e, item) => __awaiter(void 0, void 0, void 0, function* () {

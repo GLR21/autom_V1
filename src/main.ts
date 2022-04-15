@@ -23,7 +23,7 @@ app.whenReady().then
 				
 			}
 		);
-		win.loadFile( "src/view/index.html");
+		win.loadFile( "src/view/PessoaForm.html");
 		win.maximize();
 	}
 )
