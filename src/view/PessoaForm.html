@@ -172,8 +172,7 @@
 					{
 						delete array_validation.input_password;
 					}
-
-					console.log( $("#is_admin").val() );
+					
 					if( validate( array_validation, iti ) )
 					{
 						$(main_form).submit();
@@ -197,7 +196,7 @@
 				{
 					pessoa.senha = null;
 				}
-				console.log( pessoa );
+				
 				ipcRenderer.send('pessoa:add',pessoa);
 			} );
 
