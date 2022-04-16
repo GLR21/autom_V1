@@ -74,6 +74,16 @@
 						<p id="pessoa_senha_help" class="help">Este campo não deve ser vazio. Deve conter no mínimo: um caractere maiúsculo, um caractere especial, um caractere minúsculo e ter um tamanho mínimo de 8 caracteres</p>
 					</div>
 				</div>
+				<div class="field" >
+					<div class="control is-expanded">
+						<input name="pessoa_cpf" type="text" id="pessoa_cpf" class="input" placeholder="CPF" >
+					</div>
+				</div>
+				<div class="field" >
+					<div class="control is-expanded">
+						<input name="pessoa_cnpj" type="text" id="pessoa_cnpj" class="input" placeholder="CNPJ" >
+					</div>
+				</div>
 				<div class="field is-expanded">
 					<div class="control is-expanded">
 						<input name="pessoa_telefone" type="text" id="pessoa_telefone" class="input" >
@@ -89,10 +99,10 @@
 						</select>
 					</div>
 				</div>
-				<!-- <div class="field">
-					<input id="is_admin" type="checkbox" name="is_admin" value="false" class="switch">
-					<label for="is_admin">Definir usuário como administrador?</label>
-				</div> -->
+				<div class="field">
+					<input id="tipo_pessoa" type="checkbox" name="tipo_pessoa" value="false" class="switch">
+					<label for="tipo_pessoa">Pessoa Jurídica</label>
+				</div>
 				<div class="field" >
 					<button id="submit" type="button" class="button is-success is-responsive mt-2" >Salvar</button>
 				</div>

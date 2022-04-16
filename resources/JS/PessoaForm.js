@@ -11,6 +11,8 @@ const queryVariables = new URLSearchParams(window.location.search);
 $( document ).ready( function()
 {
 	$( '#pessoa_id_field' ).hide();
+	$( '#pessoa_cnpj' ).hide();
+	
 	//Loads flag number input
 	const iti = window.intlTelInput(phone, 
 	{
@@ -95,20 +97,22 @@ $( document ).ready( function()
 		ipcRenderer.send('pessoa:add',pessoa);
 	} );
 
-	// $("#is_admin").change
-	// (
-	// 	function()
-	// 	{
-	// 		if( this.checked )
-	// 		{
-	// 			$(this).attr( 'value', 'true' );
-	// 		}
-	// 		else
-	// 		{
-	// 			$(this).attr( 'value', 'false' );
-	// 		}
-	// 	} 
-	// );
+	$("#tipo_pessoa").change
+	(
+		function()
+		{
+			if( this.checked )
+			{
+				$( '#pessoa_cpf' ).hide();
+				$( '#pessoa_cnpj' ).show();
+			}
+			else
+			{
+				$( '#pessoa_cpf' ).show();
+				$( '#pessoa_cnpj' ).hide();
+			}
+		} 
+	);
 	
 	if(queryVariables.get('pessoa_id'))
 	{
