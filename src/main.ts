@@ -4,6 +4,7 @@ import { JUtil  } from "./util/JUtil";
 import 'dotenv/config'
 import { PessoaFisica } from "./objects/PessoaFisica";
 import { PessoaFisicaTransaction } from "./model/PessoaFisicaTransaction";
+import { TipoPerfilTransaction } from "./model/TipoPerfilTransaction";
 const util = JUtil;
 
 let win;
@@ -36,8 +37,9 @@ ipcMain.on( 'pessoa:add', async( e:any, item:any ) =>
 										item.email,
 										item.senha,
 										item.telefone,
-										( item.sys_auth == 'true' ? 1 : 2 )
+										item.sys_auth
 									);
+									
 	transaction = new PessoaFisicaTransaction();
 	await transaction.store( pessoa ).then( ( res )=>
 	{
@@ -73,8 +75,20 @@ ipcMain.on( 'lista:pessoa:delete', async( err ,item )=>
 	(
 		( res )=>
 		{
-			console.log( res );
 			win.webContents.send( 'lista:pessoa:delete:response', res );
+		}
+	);
+} );
+
+ipcMain.on( 'load:tipos:lista', async( err, item )=>
+{
+	transaction = new TipoPerfilTransaction();
+	await transaction.getAll().
+	then
+	(
+		( res )=>
+		{
+			win.webContents.send( 'load:comboTipos', res );
 		}
 	);
 } );

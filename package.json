@@ -8,7 +8,7 @@
   "main": "src_js/main.js",
   "scripts": {
     "start": "electron .",
-    "build": "npx tsc -p ."
+    "build_ts": "npx tsc -p ."
   },
   "author": "Gabriel Lange Ramos",
   "license": "ISC",
