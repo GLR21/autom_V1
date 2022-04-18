@@ -1,7 +1,7 @@
-interface TransactionInterface
+interface TransactionInterface<T>
 {
-	store():any;
-	delete():any;
-	get():any;
+	store(parameter:T):any;
+	delete( parameter:Number ):any;
+	get(parameter:Number):any;
 	getAll():any;
 }

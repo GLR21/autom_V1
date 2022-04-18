@@ -1,18 +1,18 @@
 import { Pessoa } from "../objects/interface/Pessoa";
-import { DBConnector } from "./connector/DBConnector";
 import { JUtil } from "../util/JUtil";
-import { Client } from "pg";
 import { PessoaFisica } from "../objects/PessoaFisica";
+import { Transaction } from "./interface/Transaction";
 
 
 class PessoaFisicaTransaction
+    extends 
+        Transaction
+            implements
+                TransactionInterface<Pessoa>
 {
-    client: Client;
-
     constructor()
     {
-        const connector = new DBConnector();
-        this.client = connector.getClient();
+        super();
     }
 
     async store( pessoa:Pessoa)
@@ -55,93 +55,79 @@ class PessoaFisicaTransaction
                 ${pessoa.sys_auth}
             )`;
         }
-        return await this.client.query( insert )
-            .then
-            ( 
-                ()=>
-                {
-                    return true;      
-                } 
-            )
-            .catch
-            (
-                (err)=>
-                {
-                    console.log( err );
-                    return false;
-                }
-            )
-            .finally
-            (
-                ()=>
-                {
-                    this.client.end();
-                    console.log( 'connection closed' );
-                }
-            );    
+
+        return await super
+                    .query( insert )
+                    .then
+                    (
+                        ( res )=>
+                        {
+                            return true;
+                        }
+                    );
     }
 
     async getAll()
     {
-        return await this.client.query
-        (
-            'Select * from pm_pessoa order by id asc;'
-        )
-        .then
-        (
-            (res)=>
-            {
+        let getAll = 'Select * from pm_pessoa order by id asc;';
 
-                let array_pessoa = new Array();
-
-                res.rows.forEach(element => 
-                {
-                    array_pessoa.push( new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth  )  );
-                });
-
-                return array_pessoa
-
-            }
-        ).catch( ( e )=> { console.log( e ) } ).finally( ()=>{ this.client.end(); console.log( 'connection closed' ) } );
+        return await super
+                    .query( 'Select * from pm_pessoa order by id asc;' )
+                    .then
+                    ( 
+                        ( res )=>
+                        {
+                            let array_pessoa = new Array();
+                            if( res.length != 0 )
+                            {
+                                res.forEach
+                                (
+                                    element => 
+                                    {
+                                        array_pessoa.push( new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth  )  );
+                                    }
+                                );
+                            }
+                            return array_pessoa
+                        } 
+                    );
     }
 
     async get( id:Number )
     {
         let query = `Select * from pm_pessoa where id = ${id}`;
         
-        return await this.client.query( query ).then( ( res )=>
-        {
+        return await super
+                    .query( query )
+                    .then
+                    ( 
+                        ( res )=>
+                        { 
+                            let pessoa;
 
-            let pessoa;
+                            res.forEach(element =>
+                            {
+                                pessoa = new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth );        
+                            });
 
-            res.rows.forEach(element =>
-            {
-                pessoa = new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth );        
-            });
-
-            return pessoa;
-        } ).catch( ( err )=> { console.log( err ) } ).finally( ()=>{ this.client.end(); console.log( 'connection closed' ); } );
+                            return pessoa; 
+                        } 
+                    );
     }
-
 
     async delete( id:Number )
     {
         let delete_query = `DELETE FROM pm_pessoa where id=${id}`;
 
-        return await this.client.query( delete_query ).then( 
-            ()=>
-            {
-                return true;      
-            }  
-        ).catch( ( err )=>
-        {
-            console.log( err );
-        } ).finally( ()=>
-        {
-            this.client.end();
-            console.log( 'connection closed' );
-        } );
-
+        return await super
+                    .query( delete_query )
+                    .then
+                    ( 
+                        ()=> 
+                        { 
+                            return true; 
+                        } 
+                    );
     }
 }
 

@@ -5,7 +5,7 @@ class TipoPerfilTransaction
 	extends
 		Transaction
 			implements 
-				TransactionInterface
+				TransactionInterface<TipoPerfil>
 {
 	static TABLE_NAME = 'pm_auth';
 
