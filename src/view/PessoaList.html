@@ -11,7 +11,7 @@
 	<title>Autom</title>
 </head>
 <body>
-	<nav class="navbar has-shadow is-primary">
+	<nav class="navbar has-shadow is-primary" role="navigation" >
 		<div class="navbar-brand">
 			<a href="" class="navbar-item" style="cursor: none;pointer-events: none;user-select: none;">
 				<figure class="is-rounded">
@@ -21,12 +21,31 @@
 		</div>
 		<div class="navbar-menu">
 			<div class="navbar-start">
-				<a href="PessoaForm.html" class="navbar-item">
-					Cadastro de pessoas
-				</a>
-				<a href="PessoaList.html" class="navbar-item">
-					Pessoas
-				</a>
+				<div class="navbar-item has-dropdown is-hoverable">
+					<div class="navbar-link">
+						Menu
+					</div>
+					<div class="navbar-dropdown">
+						<a class="navbar-item" href="PessoaForm.html"> 
+							<i class="fa-solid fa-user" ></i>
+							<p class="ml-2" >
+								Cadastro de pessoas
+							</p>
+						</a>		
+						<a class="navbar-item" href="PessoaList.html" >
+							<i class="fa-solid fa-users"></i>
+							<p class="ml-2">
+								Pessoas
+							</p>
+						</a>
+						<a class="navbar-item" href="PecasForm.html" >
+							<i class="fa-solid fa-gear"></i>
+							<p class="ml-2">
+								Cadastro de peças
+							</p>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</nav>

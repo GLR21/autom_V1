@@ -52,62 +52,36 @@
 
 	<div class="container">
 		<div class="column is-half is-offset-one-quarter">
-			<h2 class="title" >Cadastro de pessoas</h2>
+			<h2 class="title mt-5" >Cadastro de peças</h2>
 			<form id="pessoa_form">
-				<div id="pessoa_id_field" class="field">
+				<!-- <div id="pessoa_id_field" class="field">
 					<div class="control">
 						<input type="text" name="pessoa_id" id="pessoa_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
 					</div>
-				</div>
+				</div> -->
 				<div class="field" >
 					<div class="control" >
-						<input name="pessoa_nome" container="body" type="text" id="pessoa_nome" placeholder="Nome" class="input"/>
-						<p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p>
+						<input name="peca_nome" container="body" type="text" id="peca_nome" placeholder="Nome" class="input"/>
+						<!-- <p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p> -->
 					</div
 				</div>
-				<div class="field mt-2">
-					<div class="control">
-						<input name="pessoa_email" type="text" id="pessoa_email" placeholder="Email" class="input">
-						<p id="pessoa_email_help" class="help">Este campo não pode ser vazio e deve ser um email válido</p>
-					</div>
+				<div class="field mt-2" >
+					<div class="control" >
+						<textarea name="peca_descricao" container="body" type="text" id="peca_descricao" placeholder="Descrição" class="textarea"></textarea>
+						<!-- <p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p> -->
+					</div
 				</div>
-				<div class="field has-addons">
-					<div class="control has-icons-right is-expanded">
-						<input name="pessoa_senha" type="password" id="pessoa_senha" placeholder="Senha" class="input">
-						<span class="icon is-right">
-							<i style="pointer-events: all;cursor: pointer;" class="bi bi-eye-slash"  id="togglePassword"></i>
-						</span>
-						<p id="pessoa_senha_help" class="help">Este campo não deve ser vazio. Deve conter no mínimo: um caractere maiúsculo, um caractere especial, um caractere minúsculo e ter um tamanho mínimo de 8 caracteres</p>
-					</div>
+				<div class="field mt-2" >
+					<div class="control" >
+						<input name="peca_valor_compra" container="body" id="peca_valor_compra" placeholder="Valor de compra" class="input"/>
+						<p id="peca_valor_compra_help" class="help">Este campo não pode ser vazio</p>
+					</div
 				</div>
-				<div class="field" >
-					<div class="control is-expanded">
-						<input name="pessoa_cpf" type="text" id="pessoa_cpf" class="input" placeholder="CPF" >
-					</div>
-				</div>
-				<div class="field" >
-					<div class="control is-expanded">
-						<input name="pessoa_cnpj" type="text" id="pessoa_cnpj" class="input" placeholder="CNPJ" >
-					</div>
-				</div>
-				<div class="field is-expanded">
-					<div class="control is-expanded">
-						<input name="pessoa_telefone" type="text" id="pessoa_telefone" class="input" >
-						<p id="pessoa_telefone_help" class="help">Este campo não pode ser vazio e deve ser um número de telefone válido</p>
-					</div>
-				</div>
-				<div class="field">
-					<div class="select">
-						<select name="" id="admin_options">
-							<option value="0">
-								Tipo de perfil
-							</option>
-						</select>
-					</div>
-				</div>
-				<div class="field">
-					<input id="tipo_pessoa" type="checkbox" name="tipo_pessoa" value="false" class="switch">
-					<label for="tipo_pessoa">Pessoa Jurídica</label>
+				<div class="field mt-2" >
+					<div class="control" >
+						<input name="peca_valor_revenda" container="body"  id="peca_valor_revenda" placeholder="Valor de revenda" class="input"/>
+						<p id="peca_valor_revenda_help" class="help">Este campo não pode ser vazio</p>
+					</div
 				</div>
 				<div class="field" >
 					<button id="submit" type="button" class="button is-success is-responsive mt-2" >Salvar</button>
@@ -125,6 +99,6 @@
 	<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
 	<script src="../../resources/JS/view.js"></script>
 	<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
-	<script src="../../resources/JS/PessoaForm.js"></script>
+	<script src="../../resources/JS/PecasForm.js"></script>
 </body>
 </html>
