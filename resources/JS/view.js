@@ -168,15 +168,20 @@ function validate( json_of_inputs, additionalValidation = null )
                         validatedInputs[prop] = false;
                     }    
                 break;
+                case 'input_decimal':
+                    validatedInputs[prop] =  $(json_of_inputs[prop]).val().toString().replace( /[,.]/g, '' ) == '000';
+                break;
             }
+
+            console.log( prop );
         }
     );
-    
     
     for( var key in validatedInputs )
     {
         if( !validatedInputs[key] )
         {
+            
             $( `#${json_of_inputs[key].id}` ).addClass( 'is-danger' );
             $( `#${json_of_inputs[key].id}_help` ).addClass( 'is-danger' );
             $( `#${json_of_inputs[key].id}_help` ).show();
@@ -199,13 +204,33 @@ function isEmpty( value )
     return value === "";
 }
 
-
-function verifyRG( el )
+function formatAmountNoDecimals( number )
 {
-    // console.log(  );
-    for( var i=0; i < $(el ).val().length; i++  )
+    var rgx = /(\d+)(\d{3})/;
+    while( rgx.test( number ) ) 
     {
-        console.log( $(el ).val()[i] );
+        number = number.replace( rgx, '$1' + '.' + '$2' );
     }
+    return number;
 }
 
+function formatAmount( number )
+{
+    number = number.replace( /[^0-9]/g, '' );
+
+    if( number.length == 0 ) number = "0.00";
+    else if( number.length == 1 ) number = "0.0" + number;
+    else if( number.length == 2 ) number = "0." + number;
+    else number = number.substring( 0, number.length - 2 ) + '.' + number.substring( number.length - 2, number.length );
+
+    number = new Number( number );
+    number = number.toFixed( 2 );
+
+    number = number.replace( /\./g, ',' );
+
+    x = number.split( ',' );
+    x1 = x[0];
+    x2 = x.length > 1 ? ',' + x[1] : '';
+
+    return formatAmountNoDecimals( x1 ) + x2;
+}
