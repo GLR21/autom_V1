@@ -139,8 +139,9 @@ function validate( json_of_inputs, additionalValidation = null )
         {
             switch( prop )
             {
-                
                 case 'input_name':
+                case 'input_razao_social':
+                case 'input_nome_fantasia':
                     validatedInputs[prop] = !isEmpty( json_of_inputs[prop].value );
                 break;
                 case 'input_email':
@@ -196,5 +197,15 @@ function validate( json_of_inputs, additionalValidation = null )
 function isEmpty( value )
 {
     return value === "";
+}
+
+
+function verifyRG( el )
+{
+    // console.log(  );
+    for( var i=0; i < $(el ).val().length; i++  )
+    {
+        console.log( $(el ).val()[i] );
+    }
 }
 
