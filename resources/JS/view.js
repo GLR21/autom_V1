@@ -133,69 +133,198 @@ function validate( json_of_inputs, additionalValidation = null )
 
     var validatedInputs  = [];
 
+    var fields_to_validate = new Array();
+
     Object.keys( json_of_inputs ).forEach
     ( 
         prop =>
         {
-            switch( prop )
+            
+            if( Array.isArray( json_of_inputs[prop] ) )
             {
-                case 'input_name':
-                case 'input_razao_social':
-                case 'input_nome_fantasia':
-                    validatedInputs[prop] = !isEmpty( json_of_inputs[prop].value );
-                break;
-                case 'input_email':
-                    //In case the input is not empty, an regex is used to test if the email is valid. Case the field is empty, then it doens't even try the regex.
-                    if( !isEmpty( json_of_inputs[prop].value ) )
-                    {
-                        validatedInputs[prop] =  /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test( json_of_inputs[prop].value );
-                    }
-                    else
-                    {
-                        validatedInputs[prop] = false;
-                    }
-                break;
-                case 'input_password':
-                    validatedInputs[prop] = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test( json_of_inputs[prop].value  );
-                break;
-                case 'input_phone':
-                    if( !isEmpty( json_of_inputs[prop].value ) )
-                    {
-                        validatedInputs[prop] = additionalValidation.isValidNumber();
-                    }
-                    else
-                    {
-                        validatedInputs[prop] = false;
-                    }    
-                break;
-                case 'input_decimal':
-                    validatedInputs[prop] =  $(json_of_inputs[prop]).val().toString().replace( /[,.]/g, '' ) == '000';
-                break;
+                for( var i=0; i< json_of_inputs[prop].length; i++ )
+                {
+                    var index = prop+`_${i}`;
+
+                    var json = { [index]: json_of_inputs[prop][i] };
+
+                    fields_to_validate.push(  json  );    
+                }
+            }
+            else
+            {
+                fields_to_validate.push( { [prop]: json_of_inputs[prop] }  );
+            }
+            
+        }
+    );
+
+
+    var test = new Array();
+
+    fields_to_validate
+    .forEach
+    (
+        element => 
+        {
+
+            var key = Object.keys(element).toString().replace( /([_\d])/g, '' ).replace( 'input', '' );
+            
+            if( keyIsUndefined( key, test ) )
+            {
+                test[key] = [];
             }
 
-            console.log( prop );
+            test[key].push( element );
+            
         }
     );
     
+
+
+
+
+
+    Object.keys( test ).forEach
+    ( 
+        el =>
+        {
+           switch( el )
+            {
+                case 'name':
+
+                    test[el]
+                    .forEach
+                    (
+                        element => 
+                        {
+                            if( keyIsUndefined( el, validatedInputs ) )
+                            {
+                                validatedInputs[el] = [];
+                            }
+                            element = element[Object.keys( element )[0]];
+                            validatedInputs[el].push(  { el: element,  result:  !isEmpty( element.value ) } );        
+                        }
+                    );
+                break;
+                case 'email':
+                    test[el]
+                    .forEach
+                    (
+                        element => 
+                        {
+                            if( keyIsUndefined( el, validatedInputs ) )
+                            {
+                                validatedInputs[el] = [];
+                            }
+
+                            element = element[Object.keys( element )[0]];
+
+                            if( !isEmpty( element.value ) )
+                            {
+                                validatedInputs[el].push(  { el: element,  result:  /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test( element.value ) } );        
+                                
+                            }
+                            else
+                            {
+                                validatedInputs[el].push(  { el: element,  result: false } );        
+                            }
+                        }
+                    );
+                break;
+                case 'password':
+                    test[el]
+                    .forEach
+                    (
+                        element => 
+                        {
+                            if( keyIsUndefined( el, validatedInputs ) )
+                            {
+                                validatedInputs[el] = [];
+                            }
+
+                            element = element[Object.keys( element )[0]];
+                            validatedInputs[el].push(  { el: element,  result:  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test( element.value  ) } );        
+                        }
+                    );
+                break;
+                case 'phone':
+                    test[el]
+                    .forEach
+                    (
+                        element => 
+                        {
+                            if( keyIsUndefined( el, validatedInputs ) )
+                            {
+                                validatedInputs[el] = [];
+                            }
+                            
+                            element = element[Object.keys( element )[0]];
+                
+                            
+
+                            if( !isEmpty( element.value ) )
+                            {
+                                validatedInputs[el].push(  { el: element,  result:  additionalValidation.isValidNumber() } );        
+                            }
+                            else
+                            {
+                                validatedInputs[el].push(  { el: element,  result:  false } );        
+                            }
+                        }
+                    );
+                break;
+                case 'decimal':
+
+                    test[el]
+                    .forEach
+                    (
+                        element => 
+                        {
+                            if( keyIsUndefined( el, validatedInputs ) )
+                            {
+                                validatedInputs[el] = [];
+                            }
+                            
+                            element = element[Object.keys( element )[0]];
+                            validatedInputs[el].push(  { el: element,  result:  !(element.value.toString().replace( /[,.]/g, '' ) == '000') } );        
+                        }
+                    );
+                break;
+            }
+        }
+    )
+
+
+    var validatedInputsLength = getInnerLength( validatedInputs );
+    var verified_inputs = 0;
+    
     for( var key in validatedInputs )
     {
-        if( !validatedInputs[key] )
-        {
-            
-            $( `#${json_of_inputs[key].id}` ).addClass( 'is-danger' );
-            $( `#${json_of_inputs[key].id}_help` ).addClass( 'is-danger' );
-            $( `#${json_of_inputs[key].id}_help` ).show();
-            verified_inputs = verified_inputs > 0 ? verified_inputs-- : verified_inputs;
-        }
-        else
-        {
-            $( `#${json_of_inputs[key].id}` ).removeClass( 'is-danger' );
-            $( `#${json_of_inputs[key].id}_help` ).removeClass( 'is-danger' );
-            $( `#${json_of_inputs[key].id}_help` ).hide();
-            verified_inputs++;
-        }
+
+        validatedInputs[key]
+        .forEach
+        (
+            element => 
+            {
+                if( !element.result )
+                {
+                    $( `#${element.el.id}` ).addClass( 'is-danger' );
+                    $( `#${element.el.id}_help` ).addClass( 'is-danger' );
+                    $( `#${element.el.id}_help` ).show();
+                    verified_inputs = verified_inputs > 0 ? verified_inputs-- : verified_inputs;
+                }
+                else
+                {
+                    $( `#${element.el.id}` ).removeClass( 'is-danger' );
+                    $( `#${element.el.id}_help` ).removeClass( 'is-danger' );   
+                    $( `#${element.el.id}_help` ).hide();  
+                    verified_inputs++;   
+                }
+            }
+        );
     }
-    return verified_inputs==Object.keys( json_of_inputs ).length;
+    return verified_inputs == validatedInputsLength;
 }
 
 
@@ -233,4 +362,20 @@ function formatAmount( number )
     x2 = x.length > 1 ? ',' + x[1] : '';
 
     return formatAmountNoDecimals( x1 ) + x2;
+}
+
+function keyIsUndefined( key, array )
+{
+    return typeof array[key] == 'undefined';
+}
+
+function getInnerLength( array )
+{
+    var sum= 0;
+
+    for( var key in array )
+    {
+        sum+= array[key].length;
+    }
+    return sum;
 }
