@@ -179,11 +179,6 @@ function validate( json_of_inputs, additionalValidation = null )
             
         }
     );
-    
-
-
-
-
 
     Object.keys( test ).forEach
     ( 
