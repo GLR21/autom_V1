@@ -286,6 +286,22 @@ function validate( json_of_inputs, additionalValidation = null )
                         }
                     );
                 break;
+                case 'combo':
+                    test[el]
+                    .forEach
+                    (
+                        element => 
+                        {
+                            if( keyIsUndefined( el, validatedInputs ) )
+                            {
+                                validatedInputs[el] = [];
+                            }
+                            
+                            element = element[Object.keys( element )[0]];
+                            validatedInputs[el].push(  { el: element,  result:  element.value != 0} );        
+                        }
+                    );
+                break;
             }
         }
     )
@@ -304,14 +320,28 @@ function validate( json_of_inputs, additionalValidation = null )
             {
                 if( !element.result )
                 {
-                    $( `#${element.el.id}` ).addClass( 'is-danger' );
+                    if( key == 'combo' )
+                    {
+                        $( element.el.parentNode ).addClass( 'is-danger' ); 
+                    }
+                    else
+                    {
+                        $( `#${element.el.id}` ).addClass( 'is-danger' );
+                    }
                     $( `#${element.el.id}_help` ).addClass( 'is-danger' );
                     $( `#${element.el.id}_help` ).show();
                     verified_inputs = verified_inputs > 0 ? verified_inputs-- : verified_inputs;
                 }
                 else
                 {
-                    $( `#${element.el.id}` ).removeClass( 'is-danger' );
+                    if( key == 'combo' )
+                    {
+                        $( element.el.parentNode ).removeClass( 'is-danger' ); 
+                    }
+                    else
+                    {
+                        $( `#${element.el.id}` ).removeClass( 'is-danger' );
+                    }
                     $( `#${element.el.id}_help` ).removeClass( 'is-danger' );   
                     $( `#${element.el.id}_help` ).hide();  
                     verified_inputs++;   
@@ -373,4 +403,8 @@ function getInnerLength( array )
         sum+= array[key].length;
     }
     return sum;
+}
+
+function convertValueToUSA( el )
+{
 }

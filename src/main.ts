@@ -5,6 +5,9 @@ import 'dotenv/config'
 import { PessoaFisica } from "./objects/PessoaFisica";
 import { PessoaFisicaTransaction } from "./model/PessoaFisicaTransaction";
 import { TipoPerfilTransaction } from "./model/TipoPerfilTransaction";
+import { MarcasTransaction } from "./model/MarcasTransaction";
+import { PecasTransaction } from "./model/PecasTransaction";
+import { Pecas } from "./objects/Pecas";
 const util = JUtil;
 
 let win;
@@ -91,4 +94,38 @@ ipcMain.on( 'load:tipos:lista', async( err, item )=>
 			win.webContents.send( 'load:comboTipos', res );
 		}
 	);
+} );
+
+ipcMain.on(  'on:load:marcas', async( err, item )=>
+{
+	transaction = new MarcasTransaction();
+	await transaction.getAll().
+	then
+	(
+		( item )=>
+		{
+			win.webContents.send( 'load:comboMarcas', item );
+		}
+	);
+
+} );
+
+ipcMain.on( 'pecas:add', async( err, item )=>
+{
+	transaction = new PecasTransaction();
+	await transaction.store
+						  ( 
+							new Pecas
+							( 
+								item.id,
+								item.nome,
+								item.marca,
+								item.descricao,
+								item.valor_compra,
+								item.valor_revenda
+							) 
+						 ).then( ( res )=>
+						 {
+							 win.webContents.send( 'peca:saved', res );
+						 } );
 } );

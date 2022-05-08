@@ -104,11 +104,13 @@ $( document ).ready( function()
 			if( this.checked )
 			{
 				$( '#pessoa_cpf' ).hide();
+				$( '#pessoa_rg' ).hide();
 				$( '#pessoa_cnpj' ).show();
 			}
 			else
 			{
 				$( '#pessoa_cpf' ).show();
+				$( '#pessoa_rg' ).show();
 				$( '#pessoa_cnpj' ).hide();
 			}
 		} 

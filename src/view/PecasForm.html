@@ -53,7 +53,7 @@
 	<div class="container">
 		<div class="column is-half is-offset-one-quarter">
 			<h2 class="title mt-5" >Cadastro de peças</h2>
-			<form id="pessoa_form">
+			<form id="peca_form">
 				<!-- <div id="pessoa_id_field" class="field">
 					<div class="control">
 						<input type="text" name="pessoa_id" id="pessoa_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
@@ -62,24 +62,39 @@
 				<div class="field" >
 					<div class="control" >
 						<input name="peca_nome" container="body" type="text" id="peca_nome" placeholder="Nome" class="input"/>
-						<!-- <p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p> -->
+						<p id="peca_nome_help" class="help">Este campo não pode ser vazio</p>
 					</div
+				</div>
+				<div class="field mt-2" >
+					<div class="select">
+						<select name="" id="marcas" >
+							<option value="0">
+								Selecione a marca
+							</option>
+						</select>
+					</div>
+					<p id="marcas_help" class="help">Selecione uma marca!</p>
 				</div>
 				<div class="field mt-2" >
 					<div class="control" >
 						<textarea name="peca_descricao" container="body" type="text" id="peca_descricao" placeholder="Descrição" class="textarea"></textarea>
-						<!-- <p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p> -->
 					</div
 				</div>
 				<div class="field mt-2" >
-					<div class="control" >
+					<div class="control has-icons-left" >
 						<input name="peca_valor_compra" container="body" id="peca_valor_compra" placeholder="Valor de compra" class="input"/>
+						<span class="icon is-small is-left" >
+							<i class="fa-solid fa-brazilian-real-sign"></i>
+						</span>
 						<p id="peca_valor_compra_help" class="help">Este campo não pode ser vazio</p>
 					</div
 				</div>
 				<div class="field mt-2" >
-					<div class="control" >
+					<div class="control has-icons-left" >
 						<input name="peca_valor_revenda" container="body"  id="peca_valor_revenda" placeholder="Valor de revenda" class="input"/>
+						<span class="icon is-small is-left" >
+							<i class="fa-solid fa-brazilian-real-sign"></i>
+						</span>
 						<p id="peca_valor_revenda_help" class="help">Este campo não pode ser vazio</p>
 					</div
 				</div>
