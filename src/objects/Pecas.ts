@@ -1,14 +1,15 @@
+import { Marcas } from "./Marcas";
 
 class Pecas
 {
 	id:Number|null 				= null;
-	nome:string 				= '';
-	marca:Number|null 			= null;
+	nome:string|null 			= null;
+	marca:Number|Marcas|null	= null;
 	descricao:string|null 		= null; 
 	valor_compra:string|null 	= null;
 	valor_revenda:string|null 	= null;
 
-	constructor( id:Number|null, nome:string, marca:Number, descricao:string|null, valor_compra:string, valor_revenda:string )
+	constructor( id:Number|null, nome:string|null, marca:Number|Marcas|null, descricao:string|null, valor_compra:string|null, valor_revenda:string|null )
 	{
 		this.id 			= id;
 		this.nome 			= nome;

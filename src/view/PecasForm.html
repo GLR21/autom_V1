@@ -26,16 +26,22 @@
 						Menu
 					</div>
 					<div class="navbar-dropdown">
+						<a class="navbar-item" href="PessoaList.html" >
+							<i class="fa-solid fa-users"></i>
+							<p class="ml-2">
+								Pessoas
+							</p>
+						</a>
 						<a class="navbar-item" href="PessoaForm.html"> 
 							<i class="fa-solid fa-user" ></i>
 							<p class="ml-2" >
 								Cadastro de pessoas
 							</p>
-						</a>		
-						<a class="navbar-item" href="PessoaList.html" >
-							<i class="fa-solid fa-users"></i>
+						</a>
+						<a class="navbar-item" href="PecasList.html" >
+							<i class="fa-solid fa-gears"></i>
 							<p class="ml-2">
-								Pessoas
+								Peças
 							</p>
 						</a>
 						<a class="navbar-item" href="PecasForm.html" >
@@ -54,11 +60,11 @@
 		<div class="column is-half is-offset-one-quarter">
 			<h2 class="title mt-5" >Cadastro de peças</h2>
 			<form id="peca_form">
-				<!-- <div id="pessoa_id_field" class="field">
+				<div id="peca_id_field" class="field">
 					<div class="control">
-						<input type="text" name="pessoa_id" id="pessoa_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
+						<input type="text" name="peca_id" id="peca_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
 					</div>
-				</div> -->
+				</div>
 				<div class="field" >
 					<div class="control" >
 						<input name="peca_nome" container="body" type="text" id="peca_nome" placeholder="Nome" class="input"/>
@@ -80,16 +86,18 @@
 						<textarea name="peca_descricao" container="body" type="text" id="peca_descricao" placeholder="Descrição" class="textarea"></textarea>
 					</div
 				</div>
-				<div class="field mt-2" >
+				<div class="field mt-5" >
+					<p class="title is-6">Custo: </p>
 					<div class="control has-icons-left" >
-						<input name="peca_valor_compra" container="body" id="peca_valor_compra" placeholder="Valor de compra" class="input"/>
+						<input name="peca_valor_compra" container="body" id="peca_valor_compra" class="input"/>
 						<span class="icon is-small is-left" >
 							<i class="fa-solid fa-brazilian-real-sign"></i>
 						</span>
 						<p id="peca_valor_compra_help" class="help">Este campo não pode ser vazio</p>
 					</div
 				</div>
-				<div class="field mt-2" >
+				<div class="field mt-5" >
+					<p class="title is-6">Valor de Venda: </p>
 					<div class="control has-icons-left" >
 						<input name="peca_valor_revenda" container="body"  id="peca_valor_revenda" placeholder="Valor de revenda" class="input"/>
 						<span class="icon is-small is-left" >

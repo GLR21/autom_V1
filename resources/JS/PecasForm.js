@@ -1,10 +1,13 @@
 const electron = require('electron');
 const { ipcRenderer } = electron;
 const form = document.getElementById( 'peca_form' );
+const queryVariables = new URLSearchParams(window.location.search);
+
 $( document ).ready( function()
 {
+    $( '#peca_id_field').hide();
     ipcRenderer.send( 'on:load:marcas' );
-
+    
     Array.from( form.getElementsByClassName( 'input' )  ).forEach
 	( 
 		el =>
@@ -68,6 +71,7 @@ $( document ).ready( function()
     {
         const peca = 
         {
+            id              : $( '#peca_id' ).val() == '' ? null : $( '#peca_id' ).val(),
             nome            : $( '#peca_nome' ).val(),
             marca           : $( '#marcas' ).val(),
             descricao       : (isEmpty( $( '#peca_descricao' ).val()) ?  null : $( '#peca_descricao' ).val()) ,
@@ -75,9 +79,13 @@ $( document ).ready( function()
             valor_revenda   : $( '#peca_valor_revenda' ).val()
 
         }
-
         ipcRenderer.send('pecas:add', peca );
     } );
+
+    if( queryVariables.get( 'peca_id' ) && queryVariables.get( 'marca_id' ) )
+    {
+        ipcRenderer.send( 'edit:list:pecas', { peca_id: queryVariables.get( 'peca_id' ), marca_id: queryVariables.get( 'marca_id' ) }  );
+    }
     
 });
 
@@ -108,3 +116,19 @@ ipcRenderer.on( 'peca:saved', ( err, res )=>
 		main_form.reset();
 	}
 } );
+
+ipcRenderer.on
+( 
+    'edit:peca',
+    ( err, item  )=>
+    {
+        $( '#peca_id' ).val( item.id );
+        $( '#peca_nome' ).val( item.nome );
+        $( '#marcas' ).val( item.marca );
+        $( '#peca_descricao' ).val( item.descricao == 'null' ? '' : item.descricao  );
+        $( '#peca_valor_compra' ).val( new Intl.NumberFormat( 'pt-BR', { style: 'currency', currency: 'BRL' }).format( item.valor_compra ).replace( 'R$','' ).trim() );
+        $( '#peca_valor_revenda' ).val( new Intl.NumberFormat( 'pt-BR', { style: 'currency', currency: 'BRL' }).format( item.valor_revenda ).replace( 'R$','' ).trim() );
+        $( '#peca_id_field' ).show();
+    }
+);
+

@@ -13,17 +13,33 @@ class MarcasTransaction
 	{
 		super();
 	}
-	store(parameter: Marcas)
+	async store(parameter: Marcas)
 	{
 		throw new Error("Method not implemented.");
 	}
-	delete(parameter: Number)
+	async delete(parameter: Number)
 	{
 		throw new Error("Method not implemented.");
 	}
-	get(parameter: Number)
+	async get(parameter: Number)
 	{
-		throw new Error("Method not implemented.");
+		return await this.query( `SELECT * from ${ MarcasTransaction.TABLE_NAME } where id = ${parameter}` )
+		.then
+		( 
+			( res )=>
+			{ 
+				var marca;
+				res.forEach
+				(
+					element => 
+					{	
+						marca  = new Marcas( element.id, element.nome );
+					}
+				);
+				 
+				return marca;
+			} 
+		);
 	}
 	async getAll() 
 	{

@@ -62,8 +62,9 @@
 				<th></th>
 				<th>Cód.</th>
 				<th>Nome</th>
-				<th>Email</th>
-				<th></i>Telefone</th>
+				<th>Marca</th>
+				<th>Preço de custo</th>
+				<th>Preço de venda</th>
 			</tr>
 		</thead>
 		<tbody id="lista_pessoas_body">
@@ -88,8 +89,8 @@
 		(
 			()=>
 			{
-				ipcRenderer.send( 'load:lista:pessoas' );
-				ipcRenderer.on( 'load:lista:pessoas:success', ( err,item )=>
+				ipcRenderer.send( 'load:lista:pecas' );
+				ipcRenderer.on( 'load:lista:pecas:success', ( err,item )=>
 				{
 					let tbody = $( '#lista_pessoas_body' );
 
@@ -99,13 +100,13 @@
 						$( icon ).addClass( 'fas fa-edit' );
 						$( icon ).attr( 'style', 'color: #00d1b2;pointer-events: all;cursor: pointer;'  );
 						$( icon ).attr( 'id', `${element.id}` );
-						$( icon ).attr( 'onclick', 'onEdit(this)' );
+						$( icon ).attr( 'onclick', `onEdit( ${element.id} , ${ element.marca.id } )` );
 
 						var icon_delete = document.createElement( 'i' );
 						$( icon_delete ).addClass( 'fa fa-trash' );
 						$( icon_delete ).attr( 'style', 'color: #FF3860;pointer-events: all;cursor: pointer;'  );
 						$( icon_delete ).attr( 'id', `${element.id}_delete` );
-						$( icon_delete ).attr( 'onclick', 'onDelete(this)' );						
+						$( icon_delete ).attr( 'onclick', `onDelete(${ element.id })` );						
 						
 						var p_nome      = document.createElement( 'p');
 						$( p_nome ).addClass( 'ml-2' );
@@ -129,32 +130,28 @@
 						var th_nome    = document.createElement( 'TH' );
 						$( th_nome ).append( p_nome );
 						
-						if( element.sys_auth == process.env.PM_AUTH_ADMIN )
-						{
-							var admin_icon = document.createElement( 'I' );
-							$( admin_icon ).addClass( 'fa-solid fa-crown ml-2' );
-							$( admin_icon ).attr( 'style', 'color:  #ffd700' );
-							$( admin_icon ).appendTo( p_nome );
-						}
+						var td_marca   = document.createElement( 'TD' );
+						td_marca.innerText    = element.marca.nome;
 						
-						var td_email   = document.createElement( 'TD' );
-						td_email.innerText    = element.email;
-						
-						var td_telefone   = document.createElement( 'TD' );
-						td_telefone.innerText = element.telefone;
+						var td_valor_compra   = document.createElement( 'TD' );
+						td_valor_compra.innerText = Intl.NumberFormat( 'pt-BR', { style: 'currency', currency: 'BRL' }).format( element.valor_compra );
 
+						var td_valor_venda   = document.createElement( 'TD' );
+						td_valor_venda.innerText = new Intl.NumberFormat( 'pt-BR', { style: 'currency', currency: 'BRL' }).format( element.valor_revenda );
+						
 						var row = document.createElement( 'TR' );
 						row.appendChild( th_button ); 
 						row.appendChild( th_codigo );
 						row.appendChild( th_nome );
-						row.appendChild( td_email );
-						row.appendChild( td_telefone );
+						row.appendChild( td_marca );
+						row.appendChild( td_valor_compra );
+						row.appendChild( td_valor_venda );
 
 						tbody.append( row );
 					});
 				} );
 
-				ipcRenderer.on( 'lista:pessoa:delete:response', ( err, res )=>
+				ipcRenderer.on( 'lista:pecas:delete:response', ( err, res )=>
 				{
 					console.log( res );
 					if( res )
@@ -171,18 +168,17 @@
 			}
 		)
 
-		function onEdit( id )
+		function onEdit( id, marca_id )
 		{
-			location.assign( `PessoaForm.html?pessoa_id=${$( id ).attr( 'id' )}` );
+			console.log( id );
+			console.log( marca_id );
+			location.assign( `PecasForm.html?peca_id=${ id }&marca_id=${ marca_id }` );
 		}
 
 		function onDelete( id )
 		{
-			ipcRenderer.send( 'lista:pessoa:delete', $( id ).attr( 'id' ).replace( '_delete', '' ) );
+			ipcRenderer.send( 'lista:peca:delete', id );
 		}
-
-
-		
 	</script>
 </body>
 </html>

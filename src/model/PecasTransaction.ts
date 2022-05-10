@@ -1,5 +1,7 @@
+import { Pool } from "pg";
 import { Pecas } from "../objects/Pecas";
 import { Transaction } from "./interface/Transaction";
+import { MarcasTransaction } from "./MarcasTransaction";
 
 class PecasTransaction 
 	extends 
@@ -16,53 +18,84 @@ class PecasTransaction
 
 	async store(parameter: Pecas)
 	{
+		var insert;
 
-		var insert =
-		`INSERT INTO 
-			${PecasTransaction.TABLE_NAME}
-		( 
-			nome,
-			descricao,
-			valor_compra,
-			valor_revenda,
-			ref_marca
-		) 
-		values 
-		( 
-			'${ parameter.nome }',
-			'${ parameter.descricao }',
-			to_number( '${ parameter.valor_compra }'  , '${ process.env.NUMERIC_FORMAT_PSQL }' ),
-			to_number( '${ parameter.valor_revenda }' , '${ process.env.NUMERIC_FORMAT_PSQL }' ),
-			${ parameter.marca }
-		)`;
+		if( parameter.id != null )
+		{
+			insert = 
+			`
+				UPDATE 
+					${ PecasTransaction.TABLE_NAME }
+				SET 
+					nome 		  = '${ parameter.nome }',
+					descricao 	  = '${ parameter.descricao }',
+					valor_compra  = to_number( '${ parameter.valor_compra }'  , '${ process.env.NUMERIC_FORMAT_PSQL }' ),
+					valor_revenda = to_number( '${ parameter.valor_revenda }' , '${ process.env.NUMERIC_FORMAT_PSQL }' ),
+					ref_marca 	  = ${ parameter.marca }
+				WHERE
+					id = ${ parameter.id }
+			`;	
+		}
+		else
+		{
+			insert =
+			`INSERT INTO 
+				${PecasTransaction.TABLE_NAME}
+			( 
+				nome,
+				descricao,
+				valor_compra,
+				valor_revenda,
+				ref_marca
+			) 
+			values 
+			( 
+				'${ parameter.nome }',
+				'${ parameter.descricao }',
+				to_number( '${ parameter.valor_compra }'  , '${ process.env.NUMERIC_FORMAT_PSQL }' ),
+				to_number( '${ parameter.valor_revenda }' , '${ process.env.NUMERIC_FORMAT_PSQL }' ),
+				${ parameter.marca }
+			)`;
+		}
 
 		return await this.query( insert ).then( (  )=>{ return true } );
 	}
-	delete(parameter: Number) {
-		throw new Error("Method not implemented.");
-	}
-	get(parameter: Number) {
-		throw new Error("Method not implemented.");
-	}
-	getAll() 
+	async delete(parameter: Number)
 	{
-		this
+		return await this.query( `DELETE FROM ${ PecasTransaction.TABLE_NAME } WHERE id = ${ parameter }` ).then( ( )=>{ return true; } );
+	}
+	async get(parameter:any)
+	{
+		var query = `SELECT * from ${ PecasTransaction.TABLE_NAME } where id= ${parameter.id} and ref_marca = ${parameter.marca}`;
+		return await this.query(  query ).
+		then
+		( 
+			( res )=>
+			{
+				 var peca = res[0]; 
+				 return new Pecas( peca.id, peca.nome, peca.ref_marca, peca.descricao, peca.valor_compra, peca.valor_revenda  );
+			} 
+		);	
+	}
+	async getAll() 
+	{
+		return await this
 		.query( `SELECT * FROM ${ PecasTransaction.TABLE_NAME } ` )
 		.then
 		( 
-			( res ) =>
+			async( res ) =>
 			{
-				var pecas = new Array();
+				var pecas_arr = new Array();
 
-				res.forEach
-				(
-					element =>
-					{
-						pecas.push( new Pecas( element.id, element.nome, element.marca, element.descricao, element.valor_compra, element.valor_revenda ) );
-					}
-				);
 
-				return pecas;
+				await Promise.all( res.map( async( peca )=>
+				{
+					var marca_transaction = new MarcasTransaction();
+					var marca = await marca_transaction.get( peca.ref_marca );
+					pecas_arr.push( new Pecas( peca.id, peca.nome, marca , peca.descricao, peca.valor_compra, peca.valor_revenda ) );
+				} )  );
+
+				return pecas_arr;
 			} 
 		);
 	}

@@ -3,8 +3,9 @@ import { JUtil } from "../../util/JUtil";
 
 class DBConnector
 {
-	client: any;
-	constructor()
+	private static client: any;
+
+	private constructor()
     {
 		const dbconfig  = JUtil.returnJSONFromFile( 'resources/db.json' );
 		const client =  new Client
@@ -33,12 +34,18 @@ class DBConnector
 				}
 			}
 		)
-		this.client = client;					
+		return client;					
     }
 
-	getClient()
+	public static getClient()
 	{
-		return this.client;
+		if( typeof DBConnector.client == 'undefined' || DBConnector.client == null  )
+		{
+			DBConnector.client = new DBConnector();
+		}
+
+		return DBConnector.client;
+
 	}
 }
 

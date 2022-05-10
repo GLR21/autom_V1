@@ -7,8 +7,7 @@ class Transaction
 
 	constructor()
 	{
-		const connector = new DBConnector();
-		this.client = connector.getClient();
+		this.client = DBConnector.getClient();
 	}
 
 	async query( query_string:string ):Promise<void | any>
@@ -28,14 +27,6 @@ class Transaction
 							( err )=>
 							{
 								console.log( err );
-							}
-						)
-						.finally
-						(
-							()=>
-							{
-								this.client.end();
-								console.log( 'Connection ended' );
 							}
 						);
 	}
