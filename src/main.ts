@@ -28,9 +28,7 @@ app.whenReady().then
 				
 			}
 		);
-		win.loadFile( "src/view/LoginForm.html");
-		// win.loadFile( "src/view/PessoaForm.html");
-		// win.loadFile( "src/view/PecasList.html");
+		win.loadFile( "src/view/auth/LoginForm.html");
 		win.maximize();
 	}
 )

@@ -2,5 +2,5 @@
 
 $( '#logout' ).on( 'click', ()=>
 {
-	location.assign( 'LoginForm.html' );
+	location.assign( 'auth/LoginForm.html' );
 } );

@@ -28,7 +28,7 @@ $( document ).ready
 			console.log( res );
 			if( res )
 			{
-				window.location = 'PessoaList.html';
+				window.location = '../PessoaList.html';
 			}
 			else
 			{
