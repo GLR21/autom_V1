@@ -1,0 +1,63 @@
+<html style="overflow-y: hidden;">
+	<head>
+		<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
+		<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+	</head>
+	<body>
+		<section class="hero is-primary is-fullheight">
+			<div class="hero-body">
+				<div class="container">
+					<div class="columns is-centered">
+						<div class="column is-5-tablet is-4-desktop is-3-widescreen">
+							<div class="card-image has-text-centered mb-5">
+								<div class="columns has-text-left is-vcentered is-mobile" >
+									<div class="column is-one-fifth">
+										<figure class="image is-64x64 is-inline-block">
+											<img class="is-rounded" src="../../resources/images/logo.png"/>
+										</figure>
+									</div>
+									<div style="padding-left: 3em;" class="column">
+										<p class="title">Autom</p>
+									</div>
+								</div>
+							</div>
+							<form id="login_form" class="box">
+								<div class="field">
+									<label for="" class="label">Email</label>
+									<div class="control has-icons-left">
+										<input type="email" placeholder="email" id="email" class="input" >
+											<span class="icon is-small is-left">
+												<i class="fa fa-envelope"></i>
+											</span>
+									</div>
+								</div>
+								<div class="field">
+									<label for="" class="label">Password</label>
+									<div class="control has-icons-left">
+										<input type="password" placeholder="senha" id="senha" class="input" >
+										<span class="icon is-small is-left">
+											<i class="fa fa-lock"></i>
+										</span>
+									</div>
+									<p id="login_help" class="help">Email ou senha incorretos</p>
+								</div>
+								<div class="field">
+									<button id="submit" class="button is-success">
+										Login
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+		<script>
+			window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
+			window.$ = window.jQuery;
+		</script>
+		<script src="../../resources/JS/view.js"></script>
+		<script src="../../resources/JS/LoginForm.js"></script>
+	</body>
+</html>

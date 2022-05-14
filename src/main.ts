@@ -2,8 +2,8 @@ const electron = require('electron');
 const { app, BrowserWindow , ipcMain } = electron ;
 import { JUtil  } from "./util/JUtil";
 import 'dotenv/config'
-import { PessoaFisica } from "./objects/PessoaFisica";
-import { PessoaFisicaTransaction } from "./model/PessoaFisicaTransaction";
+import { Pessoa } from "./objects/Pessoa";
+import { PessoaTransaction } from "./model/PessoaTransaction";
 import { TipoPerfilTransaction } from "./model/TipoPerfilTransaction";
 import { MarcasTransaction } from "./model/MarcasTransaction";
 import { PecasTransaction } from "./model/PecasTransaction";
@@ -28,23 +28,25 @@ app.whenReady().then
 				
 			}
 		);
+		win.loadFile( "src/view/LoginForm.html");
 		// win.loadFile( "src/view/PessoaForm.html");
-		win.loadFile( "src/view/PecasList.html");
+		// win.loadFile( "src/view/PecasList.html");
 		win.maximize();
 	}
 )
 
 ipcMain.on( 'pessoa:add', async( e:any, item:any ) => 
 {
-	const pessoa = new PessoaFisica(	item.id, 
-										item.nome,
-										item.email,
-										item.senha,
-										item.telefone,
-										item.sys_auth
-									);
+	const pessoa = new Pessoa
+							(	item.id, 
+								item.nome,
+								item.email,
+								item.senha,
+								item.telefone,
+								item.sys_auth
+							);
 									
-	transaction = new PessoaFisicaTransaction();
+	transaction = new PessoaTransaction();
 	await transaction.store( pessoa ).then( ( res )=>
 	{
 		win.webContents.send( 'pessoa:add:success', res );
@@ -54,7 +56,7 @@ ipcMain.on( 'pessoa:add', async( e:any, item:any ) =>
 
 ipcMain.on( 'load:lista:pessoas', async() =>
 {
-	transaction = new PessoaFisicaTransaction();
+	transaction = new PessoaTransaction();
 	await transaction.getAll().then( ( res )=>
 	{
 		win.webContents.send( 'load:lista:pessoas:success', res );
@@ -64,7 +66,7 @@ ipcMain.on( 'load:lista:pessoas', async() =>
 
 ipcMain.on( 'edit:list:pessoas', async( err, res )=>
 {
-	transaction = new PessoaFisicaTransaction();
+	transaction = new PessoaTransaction();
 	await transaction.get( res ).then( ( res )=>
 	{
 		win.webContents.send( 'edit:pessoa', res );
@@ -74,7 +76,7 @@ ipcMain.on( 'edit:list:pessoas', async( err, res )=>
 
 ipcMain.on( 'lista:pessoa:delete', async( err ,item )=>
 {	
-	transaction = new PessoaFisicaTransaction();
+	transaction = new PessoaTransaction();
 	await transaction.delete( item ).then
 	(
 		( res )=>
@@ -181,6 +183,16 @@ ipcMain.on
 				win.webContents.send( 'lista:pecas:delete:response', res );
 			}
 		);
+	}
+);
+
+ipcMain.on
+(  
+	'on:login',
+	async( err, item )=>
+	{
+		transaction = new PessoaTransaction();
+		await transaction.onLogin( item ).then( ( res )=>{ win.webContents.send( 'login:attempt', res ) }  );
 	}
 );
 

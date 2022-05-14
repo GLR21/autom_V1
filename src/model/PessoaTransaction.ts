@@ -1,10 +1,9 @@
-import { Pessoa } from "../objects/interface/Pessoa";
+import { Pessoa } from "../objects/Pessoa";
 import { JUtil } from "../util/JUtil";
-import { PessoaFisica } from "../objects/PessoaFisica";
 import { Transaction } from "./interface/Transaction";
 
 
-class PessoaFisicaTransaction
+class PessoaTransaction
     extends 
         Transaction
             implements
@@ -84,7 +83,7 @@ class PessoaFisicaTransaction
                                 (
                                     element => 
                                     {
-                                        array_pessoa.push( new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth  )  );
+                                        array_pessoa.push( new Pessoa( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth  )  );
                                     }
                                 );
                             }
@@ -107,7 +106,7 @@ class PessoaFisicaTransaction
 
                             res.forEach(element =>
                             {
-                                pessoa = new PessoaFisica( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth );        
+                                pessoa = new Pessoa( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth );        
                             });
 
                             return pessoa; 
@@ -129,6 +128,12 @@ class PessoaFisicaTransaction
                         } 
                     );
     }
+
+    async onLogin( parameter:any )
+    {
+        var query = `select * from pm_pessoa where email= '${parameter.email}' and senha = '${JUtil.hashString( parameter.senha, JUtil.SHA256 )}'`;
+        return await super.query(  query ).then( ( res )=> {  return res.length != 0 } );
+    }
 }
 
-export { PessoaFisicaTransaction };
+export { PessoaTransaction };

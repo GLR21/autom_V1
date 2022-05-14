@@ -12,6 +12,22 @@ $( document ).ready( function()
 {
 	$( '#pessoa_id_field' ).hide();
 	$( '#pessoa_cnpj' ).hide();
+
+	//Carrega toda a combo
+	ipcRenderer.send( 'load:tipos:lista' );
+	ipcRenderer.on( 'load:comboTipos', ( err, res )=>
+	{
+		res.forEach
+		(
+			element => 
+			{
+				var option = document.createElement( 'option' );
+				$( option ).attr( 'value', element.id );
+				option.innerText = element.descricao;
+				$('#admin_options' ).append( option );	
+			}
+		);
+	} );
 	
 	//Loads flag number input
 	const iti = window.intlTelInput(phone, 
@@ -121,8 +137,16 @@ $( document ).ready( function()
 		ipcRenderer.send( 'edit:list:pessoas', queryVariables.get('pessoa_id')  );
 	}
 
-	ipcRenderer.send( 'load:tipos:lista' );
-
+	//Define o valor, se houver
+	ipcRenderer.on( 'edit:pessoa', ( err, res )=>
+	{
+		$( '#pessoa_id' ).val( res.id );
+		$( '#pessoa_nome' ).val( res.nome );
+		$( '#pessoa_email' ).val( res.email );
+		$( '#pessoa_telefone' ).val( res.telefone );
+		$('#admin_options').val( res.sys_auth );
+		$( '#pessoa_id_field' ).show();
+	} );
 } );
 	
 ipcRenderer.on( 'pessoa:add:success', ( err, item )=>
@@ -137,30 +161,6 @@ ipcRenderer.on( 'pessoa:add:success', ( err, item )=>
 		bulmaToast.toast({ message: 'Ocorreu um erro, favor entrar em contato com o suporte.', type: 'is-danger', duration: 3500, closeOnClick: true, offsetTop: 15 });
 		main_form.reset();
 	}
-} );
-
-ipcRenderer.on( 'edit:pessoa', ( err, res )=>
-{
-	$( '#pessoa_id' ).val( res.id );
-	$( '#pessoa_nome' ).val( res.nome );
-	$( '#pessoa_email' ).val( res.email );
-	$( '#pessoa_telefone' ).val( res.telefone );
-	$('#admin_options').val( res.sys_auth );
-	$( '#pessoa_id_field' ).show();
-} );
-
-ipcRenderer.on( 'load:comboTipos', ( err, res )=>
-{
-	res.forEach
-	(
-		element => 
-		{
-			var option = document.createElement( 'option' );
-			$( option ).attr( 'value', element.id );
-			option.innerText = element.descricao;
-			$('#admin_options' ).append( option );	
-		}
-	);
 } );
 
 function isPasswordEdition()

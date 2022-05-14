@@ -1,127 +1,127 @@
 <html lang="pt-BR" style="overflow-y: hidden;">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="../../node_modules/intl-tel-input/build/css/intlTelInput.css">
-	<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
-	<link rel="stylesheet" href="../../resources/css/bulma-switch.min_working.css">
-	<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
-	<title>Autom</title>
-</head>
-<body >
-	<nav class="navbar has-shadow is-primary" role="navigation" >
-		<div class="navbar-brand">
-			<a href="" class="navbar-item" style="cursor: none;pointer-events: none;user-select: none;">
-				<figure class="is-rounded">
-					<img src="../../resources/images/logo.png" alt="">
-				</figure>
-			</a>
-		</div>
-		<div class="navbar-menu">
-			<div class="navbar-start">
-				<div class="navbar-item has-dropdown is-hoverable">
-					<div class="navbar-link">
-						Menu
-					</div>
-					<div class="navbar-dropdown">
-						<a class="navbar-item" href="PessoaList.html" >
-							<i class="fa-solid fa-users"></i>
-							<p class="ml-2">
-								Pessoas
-							</p>
-						</a>
-						<a class="navbar-item" href="PessoaForm.html"> 
-							<i class="fa-solid fa-user" ></i>
-							<p class="ml-2" >
-								Cadastro de pessoas
-							</p>
-						</a>
-						<a class="navbar-item" href="PecasList.html" >
-							<i class="fa-solid fa-gears"></i>
-							<p class="ml-2">
-								Peças
-							</p>
-						</a>
-						<a class="navbar-item" href="PecasForm.html" >
-							<i class="fa-solid fa-gear"></i>
-							<p class="ml-2">
-								Cadastro de peças
-							</p>
-						</a>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+		<link rel="stylesheet" href="../../node_modules/intl-tel-input/build/css/intlTelInput.css">
+		<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
+		<link rel="stylesheet" href="../../resources/css/bulma-switch.min_working.css">
+		<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+		<title>Autom</title>
+	</head>
+	<body >
+		<nav class="navbar has-shadow is-primary" role="navigation" >
+			<div class="navbar-brand">
+				<a href="" class="navbar-item" style="cursor: none;pointer-events: none;user-select: none;">
+					<figure class="is-rounded">
+						<img src="../../resources/images/logo.png" alt="">
+					</figure>
+				</a>
+			</div>
+			<div class="navbar-menu">
+				<div class="navbar-start">
+					<div class="navbar-item has-dropdown is-hoverable">
+						<div class="navbar-link">
+							Menu
+						</div>
+						<div class="navbar-dropdown">
+							<a class="navbar-item" href="PessoaList.html" >
+								<i class="fa-solid fa-users"></i>
+								<p class="ml-2">
+									Pessoas
+								</p>
+							</a>
+							<a class="navbar-item" href="PessoaForm.html"> 
+								<i class="fa-solid fa-user" ></i>
+								<p class="ml-2" >
+									Cadastro de pessoas
+								</p>
+							</a>
+							<a class="navbar-item" href="PecasList.html" >
+								<i class="fa-solid fa-gears"></i>
+								<p class="ml-2">
+									Peças
+								</p>
+							</a>
+							<a class="navbar-item" href="PecasForm.html" >
+								<i class="fa-solid fa-gear"></i>
+								<p class="ml-2">
+									Cadastro de peças
+								</p>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</nav>
+		</nav>
 
-	<div class="container">
-		<div class="column is-half is-offset-one-quarter">
-			<h2 class="title mt-5" >Cadastro de peças</h2>
-			<form id="peca_form">
-				<div id="peca_id_field" class="field">
-					<div class="control">
-						<input type="text" name="peca_id" id="peca_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
+		<div class="container">
+			<div class="column is-half is-offset-one-quarter">
+				<h2 class="title mt-5" >Cadastro de peças</h2>
+				<form id="peca_form">
+					<div id="peca_id_field" class="field">
+						<div class="control">
+							<input type="text" name="peca_id" id="peca_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
+						</div>
 					</div>
-				</div>
-				<div class="field" >
-					<div class="control" >
-						<input name="peca_nome" container="body" type="text" id="peca_nome" placeholder="Nome" class="input"/>
-						<p id="peca_nome_help" class="help">Este campo não pode ser vazio</p>
-					</div
-				</div>
-				<div class="field mt-2" >
-					<div class="select">
-						<select name="" id="marcas" >
-							<option value="0">
-								Selecione a marca
-							</option>
-						</select>
+					<div class="field" >
+						<div class="control" >
+							<input name="peca_nome" container="body" type="text" id="peca_nome" placeholder="Nome" class="input"/>
+							<p id="peca_nome_help" class="help">Este campo não pode ser vazio</p>
+						</div
 					</div>
-					<p id="marcas_help" class="help">Selecione uma marca!</p>
-				</div>
-				<div class="field mt-2" >
-					<div class="control" >
-						<textarea name="peca_descricao" container="body" type="text" id="peca_descricao" placeholder="Descrição" class="textarea"></textarea>
-					</div
-				</div>
-				<div class="field mt-5" >
-					<p class="title is-6">Custo: </p>
-					<div class="control has-icons-left" >
-						<input name="peca_valor_compra" container="body" id="peca_valor_compra" class="input"/>
-						<span class="icon is-small is-left" >
-							<i class="fa-solid fa-brazilian-real-sign"></i>
-						</span>
-						<p id="peca_valor_compra_help" class="help">Este campo não pode ser vazio</p>
-					</div
-				</div>
-				<div class="field mt-5" >
-					<p class="title is-6">Valor de Venda: </p>
-					<div class="control has-icons-left" >
-						<input name="peca_valor_revenda" container="body"  id="peca_valor_revenda" placeholder="Valor de revenda" class="input"/>
-						<span class="icon is-small is-left" >
-							<i class="fa-solid fa-brazilian-real-sign"></i>
-						</span>
-						<p id="peca_valor_revenda_help" class="help">Este campo não pode ser vazio</p>
-					</div
-				</div>
-				<div class="field" >
-					<button id="submit" type="button" class="button is-success is-responsive mt-2" >Salvar</button>
-				</div>
-			</form>
+					<div class="field mt-2" >
+						<div class="select">
+							<select name="" id="marcas" >
+								<option value="0">
+									Selecione a marca
+								</option>
+							</select>
+						</div>
+						<p id="marcas_help" class="help">Selecione uma marca!</p>
+					</div>
+					<div class="field mt-2" >
+						<div class="control" >
+							<textarea name="peca_descricao" container="body" type="text" id="peca_descricao" placeholder="Descrição" class="textarea"></textarea>
+						</div
+					</div>
+					<div class="field mt-5" >
+						<p class="title is-6">Custo: </p>
+						<div class="control has-icons-left" >
+							<input name="peca_valor_compra" container="body" id="peca_valor_compra" class="input"/>
+							<span class="icon is-small is-left" >
+								<i class="fa-solid fa-brazilian-real-sign"></i>
+							</span>
+							<p id="peca_valor_compra_help" class="help">Este campo não pode ser vazio</p>
+						</div
+					</div>
+					<div class="field mt-5" >
+						<p class="title is-6">Valor de Venda: </p>
+						<div class="control has-icons-left" >
+							<input name="peca_valor_revenda" container="body"  id="peca_valor_revenda" placeholder="Valor de revenda" class="input"/>
+							<span class="icon is-small is-left" >
+								<i class="fa-solid fa-brazilian-real-sign"></i>
+							</span>
+							<p id="peca_valor_revenda_help" class="help">Este campo não pode ser vazio</p>
+						</div
+					</div>
+					<div class="field" >
+						<button id="submit" type="button" class="button is-success is-responsive mt-2" >Salvar</button>
+					</div>
+				</form>
+			</div>
 		</div>
-	</div>
-	<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-	<script>
-		window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
-		window.$ = window.jQuery;
-	</script>
-	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
-	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
-	<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
-	<script src="../../resources/JS/view.js"></script>
-	<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
-	<script src="../../resources/JS/PecasForm.js"></script>
-</body>
+		<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+		<script>
+			window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
+			window.$ = window.jQuery;
+		</script>
+		<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
+		<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
+		<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
+		<script src="../../resources/JS/view.js"></script>
+		<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
+		<script src="../../resources/JS/PecasForm.js"></script>
+	</body>
 </html>
