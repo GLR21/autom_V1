@@ -1,4 +1,4 @@
-function cpfChange(cpfValue)
+function cpfChange(cpfValue, id)
 {
     var numeric = cpfValue.replace(/[^0-9]+/g, '');
     var cpfLength = numeric.length;
@@ -7,7 +7,7 @@ function cpfChange(cpfValue)
     var partTwo = numeric.slice(3, 6) + ".";
     var partThree = numeric.slice(6, 9) + "-";
 
-    var cpfInput = document.getElementById("cpf"); // here is the CPF ID of the input
+    var cpfInput = document.getElementById(`${id}`); // here is the CPF ID of the input
 
     var arr = 
     [  
@@ -52,6 +52,78 @@ function cpfChange(cpfValue)
                     partTwo +
                     partThree +
                     numeric.slice(9, 11);
+                    cpfInput.value = formatCPF;
+        break;
+    }
+}
+
+function cnpjChange(cpfValue, id)
+{
+    var numeric = cpfValue.replace(/[^0-9]+/g, '');
+    var cpfLength = numeric.length;
+    
+    var partOne   = numeric.slice( 0 ,2 ) + ".";
+    var partTwo   = numeric.slice( 2 ,5 ) + ".";
+    var partThree = numeric.slice( 5 ,8 ) + "/";
+    var partFour  = numeric.slice( 8 ,12) + "-";
+    var partFive  = numeric.slice( 16,18);
+    
+
+    var cpfInput = document.getElementById(`${id}`); // here is the CPF ID of the input
+
+    var arr = 
+    [  
+        cpfLength < 3,
+        cpfLength >= 3 && cpfLength < 5,
+        cpfLength >= 5 && cpfLength < 8,
+        cpfLength >= 8 && cpfLength < 12,
+        cpfLength == 12,
+        cpfLength >= 14,
+    ]; 
+
+    var index = arr.indexOf( true );
+    
+    switch (index)
+    {
+        case 0:
+            cpfInput.value = numeric;
+        break;
+        
+        case 1:
+            var formatCPF = partOne +
+                numeric.slice(2);
+                cpfInput.value = formatCPF;
+        break;
+        
+        case 2:
+            var formatCPF = partOne +
+            partTwo +
+            numeric.slice(5);
+            cpfInput.value = formatCPF;
+        break;
+        
+        case 3:
+            var formatCPF = partOne +
+                    partTwo +
+                    partThree +
+                    numeric.slice(8);
+                    cpfInput.value = formatCPF;
+        break;
+        
+        case 4:
+            var formatCPF = partOne +
+            partTwo +
+            partThree +
+            partFour
+            cpfInput.value = formatCPF;
+        break;
+
+        case 5:
+            var formatCPF = partOne +
+                    partTwo +
+                    partThree +
+                    partFour  +
+                    numeric.slice( 12,14 )
                     cpfInput.value = formatCPF;
         break;
     }
@@ -302,6 +374,21 @@ function validate( json_of_inputs, additionalValidation = null )
                         }
                     );
                 break;
+                case 'cpf':
+                    test[el]
+                    .forEach
+                    (
+                        element => 
+                        {
+                            if( keyIsUndefined( el, validatedInputs ) )
+                            {
+                                validatedInputs[el] = [];
+                            }
+                            element = element[Object.keys( element )[0]];
+                            validatedInputs[el].push(  { el: element,  result:  validateCPF( element.value ) } );        
+                        }
+                    );
+                break;
             }
         }
     )
@@ -405,6 +492,95 @@ function getInnerLength( array )
     return sum;
 }
 
-function convertValueToUSA( el )
+function validateCPF( cpf  )
 {
+
+    cpf = cpf.replace( /([-.])/g, '' );
+    
+    let i = 0;
+    
+    if( cpf.length < 11 )
+    {
+        return false
+    }
+
+    let sum_equals = 0;
+
+    while( i <= cpf.length  )
+    {
+        sum_equals+= ( parseInt( cpf[0], 10  ) == parseInt( cpf[i], 10 ) ? 1 : 0 );
+        ++i;
+    } 
+
+    i = 0;
+
+    if( sum_equals == cpf.length )
+    {
+        return false;
+    }
+    
+    var nine_digits = [];
+    var ten_digits  = [];
+    while( i <= 8 )
+    {
+        nine_digits.push( cpf[i] );
+        ++i;
+    }
+
+    nine_digits.reverse();
+
+    i = 0;
+    let sum = 0;
+    let multiplier_starter = 2;
+
+    while( i <= 8 )
+    {
+        sum+= ( parseInt( nine_digits[i], 10) ) *( multiplier_starter+i );
+        ++i;
+    }
+
+    var first_digit = ( ((sum*10)%11) == 10 || ((sum*10)%11) == 11 ? 0: ((sum*10)%11)  ) == parseInt( cpf[ cpf.length -2 ] , 10 );
+
+    //primeira validacao é falsa
+    if( !first_digit )
+    {
+        return false
+    }
+
+    i = 0;
+    while( i <= 9 )
+    {
+        ten_digits.push( cpf[i] );
+        ++i;
+    }
+    ten_digits.reverse();
+    i = 0;
+    sum = 0;
+    while( i <= 9 )
+    {
+        sum+= parseInt( ten_digits[i], 10) *( multiplier_starter+i );
+        ++i;
+    }
+    var second_digit = ( ((sum*10)%11) == 10 || ((sum*10)%11) == 11 ? 0: ((sum*10)%11)  ) == parseInt( cpf[ cpf.length -1 ] , 10 );    
+
+    return second_digit === first_digit;
+}
+
+function formatDate( date_string, locale )
+{
+    var split = '';
+    string_return = '';
+    switch( locale )
+    {
+        case 'br':
+            split = date_string.split( '-' );
+            string_return = split[2]+'/'+split[1]+'/'+split[0];
+        break;
+        case 'en':
+            split = date_string.split( '/' );
+            string_return = split[2]+'-'+split[1]+'-'+split[0];
+        break;
+    }
+   
+    return string_return;
 }

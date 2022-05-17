@@ -1,6 +1,8 @@
 import { Pessoa } from "../objects/Pessoa";
 import { JUtil } from "../util/JUtil";
 import { Transaction } from "./interface/Transaction";
+import { PessoaFisicaTransaction } from "./PessoaFisicaTransaction";
+import { PessoaJuridicaTransaction } from "./PessoaJuridicaTransaction";
 
 
 class PessoaTransaction
@@ -31,7 +33,14 @@ class PessoaTransaction
                 insert+= `senha='${JUtil.hashString( pessoa.senha, JUtil.SHA256 )}',`;
             }
             insert+=`telefone='${pessoa.telefone}',`;
-            insert+=`sys_auth=${pessoa.sys_auth} `;
+            insert+=`sys_auth=${pessoa.sys_auth},`;
+            insert+=`cep='${pessoa.cep}',`;
+            insert+=`rua='${pessoa.rua}',`;
+            insert+=`bairro='${pessoa.bairro}',`;
+            insert+=`numero_endereco=${pessoa.numero_endereco},`;
+            insert+=`cidade='${pessoa.cidade}',`;
+            insert+=`estado='${pessoa.estado}',`;
+            insert+=`tipo_pessoa=${pessoa.tipo_pessoa}`;
             insert+= ` where id=${pessoa.id}`;
         }
         else
@@ -43,7 +52,14 @@ class PessoaTransaction
                 email, 
                 senha, 
                 telefone, 
-                sys_auth 
+                sys_auth,
+                cep,
+                rua,
+                bairro,
+                numero_endereco,
+                cidade,
+                estado,
+                tipo_pessoa 
             ) 
             values 
             ( 
@@ -51,17 +67,46 @@ class PessoaTransaction
                 '${pessoa.email}',
                 '${ JUtil.hashString( pessoa.senha, JUtil.SHA256 ) }',
                 '${pessoa.telefone}',
-                ${pessoa.sys_auth}
-            )`;
+                ${pessoa.sys_auth},
+                '${pessoa.cep}',
+                '${pessoa.rua}',
+                '${pessoa.bairro}',
+                ${pessoa.numero_endereco},
+                '${pessoa.cidade}',
+                '${pessoa.estado}',
+                ${pessoa.tipo_pessoa}
+            ) RETURNING id`;
         }
-
+        
         return await super
                     .query( insert )
                     .then
                     (
-                        ( res )=>
+                        async ( res )=>
                         {
-                            return true;
+
+                            var transaction;
+                            var upgrade = false;
+                            
+                            if( pessoa.id != null )
+                            {
+                                upgrade = true;
+                            }
+                            else
+                            {
+                                pessoa.id = res.rows[0].id;
+                            }
+                            
+
+                            if( pessoa.tipo_pessoa == 0 )
+                            {
+                                transaction = new PessoaFisicaTransaction();
+                            }
+                            else
+                            {
+                                transaction = new PessoaJuridicaTransaction();
+                            }
+                            return await transaction.store( pessoa, upgrade );
                         }
                     );
     }
@@ -77,13 +122,30 @@ class PessoaTransaction
                         ( res )=>
                         {
                             let array_pessoa = new Array();
-                            if( res.length != 0 )
+                            if( res.rows.length != 0 )
                             {
-                                res.forEach
+                                res.rows.forEach
                                 (
                                     element => 
                                     {
-                                        array_pessoa.push( new Pessoa( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth  )  );
+                                        array_pessoa.push
+                                        ( 
+                                            new Pessoa
+                                                ( 
+                                                    element.id,
+                                                    element.nome,
+                                                    element.email,
+                                                    element.senha,
+                                                    element.telefone,
+                                                    element.sys_auth,
+                                                    element.cep, element.rua,
+                                                    element.bairro,
+                                                    element.numero_endereco,
+                                                    element.cidade,
+                                                    element.estado,
+                                                    element.tipo_pessoa 
+                                                )  
+                                        );
                                     }
                                 );
                             }
@@ -100,39 +162,86 @@ class PessoaTransaction
                     .query( query )
                     .then
                     ( 
-                        ( res )=>
+                        async ( res )=>
                         { 
                             let pessoa;
 
-                            res.forEach(element =>
+                            res.rows.forEach(element =>
                             {
-                                pessoa = new Pessoa( element.id, element.nome, element.email, element.senha, element.telefone, element.sys_auth );        
+                                pessoa = new Pessoa
+                                ( 
+                                    element.id,
+                                    element.nome,
+                                    element.email,
+                                    element.senha,
+                                    element.telefone,
+                                    element.sys_auth,
+                                    element.cep, 
+                                    element.rua,
+                                    element.bairro,
+                                    element.numero_endereco,
+                                    element.cidade,
+                                    element.estado,
+                                    element.tipo_pessoa 
+                                );        
                             });
 
-                            return pessoa; 
+                            var transaction;
+
+                            if( pessoa.tipo_pessoa == 0 )
+                            {
+                                transaction = new PessoaFisicaTransaction();
+                            }
+                            else
+                            {
+                                transaction = new PessoaJuridicaTransaction();
+                            }
+
+                            return await transaction.get( pessoa );
                         } 
                     );
     }
 
-    async delete( id:Number )
+    async delete( parameter:any )
     {
-        let delete_query = `DELETE FROM pm_pessoa where id=${id}`;
+        let delete_query = `DELETE FROM pm_pessoa where id=${parameter.id}`;
 
-        return await super
-                    .query( delete_query )
-                    .then
-                    ( 
-                        ()=> 
-                        { 
-                            return true; 
-                        } 
-                    );
+        var transaction;
+
+        var is_deleted = false;
+
+        if( parameter.tipo_pessoa == 0 )
+        {
+            transaction = new PessoaFisicaTransaction();
+        }
+        else
+        {
+            transaction = new PessoaJuridicaTransaction();
+        }
+
+        is_deleted = await transaction.delete( parameter.id );
+        
+        if( is_deleted )
+        {
+            return await super
+                        .query( delete_query )
+                        .then
+                        ( 
+                            ()=> 
+                            { 
+                                return true; 
+                            } 
+                        );
+
+        }
+
+        return is_deleted
     }
 
     async onLogin( parameter:any )
     {
         var query = `select * from pm_pessoa where email= '${parameter.email}' and senha = '${JUtil.hashString( parameter.senha, JUtil.SHA256 )}'`;
-        return await super.query(  query ).then( ( res )=> {  return res.length != 0 } );
+        return await super.query(  query ).then( ( res )=> {  return res.rows.length != 0 } );
     }
 }
 

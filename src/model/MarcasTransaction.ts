@@ -29,7 +29,7 @@ class MarcasTransaction
 			( res )=>
 			{ 
 				var marca;
-				res.forEach
+				res.rows.forEach
 				(
 					element => 
 					{	
@@ -52,7 +52,7 @@ class MarcasTransaction
 			{
 				var marcas = new Array();
 
-				res.forEach
+				res.rows.forEach
 				(
 					element =>
 					{

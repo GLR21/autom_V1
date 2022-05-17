@@ -87,6 +87,7 @@
 	<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
 	<script src="../../resources/JS/view.js"></script>
 	<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
+	<script src="../../node_modules/@vizuaalog/bulmajs/dist/alert.js"></script>
 	<script>
 		const electron = require('electron');
 		const { ipcRenderer } = electron;
@@ -111,8 +112,7 @@
 						var icon_delete = document.createElement( 'i' );
 						$( icon_delete ).addClass( 'fa fa-trash' );
 						$( icon_delete ).attr( 'style', 'color: #FF3860;pointer-events: all;cursor: pointer;'  );
-						$( icon_delete ).attr( 'id', `${element.id}_delete` );
-						$( icon_delete ).attr( 'onclick', 'onDelete(this)' );						
+						$( icon_delete ).attr( 'onclick', `onDelete('${ element.id }_${ element.tipo_pessoa }')` );						
 						
 						var p_nome      = document.createElement( 'p');
 						$( p_nome ).addClass( 'ml-2' );
@@ -163,7 +163,6 @@
 
 				ipcRenderer.on( 'lista:pessoa:delete:response', ( err, res )=>
 				{
-					console.log( res );
 					if( res )
 					{
 						bulmaToast.toast({ message: 'Registro deletado com sucesso com sucesso', type: 'is-success', duration: 5000, closeOnClick: true, offsetTop: 15 });
@@ -185,7 +184,34 @@
 
 		function onDelete( id )
 		{
-			ipcRenderer.send( 'lista:pessoa:delete', $( id ).attr( 'id' ).replace( '_delete', '' ) );
+			Bulma().alert
+			(
+				{
+					type   : 'warning',
+					title  : 'Deseja realmente apagar este registro?',
+					body   : 'Ao apagar este registro, todos os dados associados a ele também serão apagados.',
+					confirm: 
+					{
+						label: 'Confirmar',
+						onClick: function()
+						{
+							var split = id.split( '_' );
+
+							var json_info =
+							{
+								id: split[0],
+								tipo_pessoa: split[1]
+							}
+							ipcRenderer.send( 'lista:pessoa:delete', json_info );
+						}
+					},
+					cancel:
+					{
+						label:'Cancelar'
+					}
+				}
+			)
+			
 		}
 
 

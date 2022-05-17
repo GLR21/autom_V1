@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
 	<link rel="stylesheet" href="../../resources/css/bulma-switch.min_working.css">
 	<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+	<link href="../../resources/css/jquery-datepicker.css" rel="stylesheet"/>
 	<title>Autom</title>
 </head>
 <body >
@@ -72,14 +73,12 @@
 						<input type="text" name="pessoa_id" id="pessoa_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
 					</div>
 				</div>
-				<div class="field" >
-					<div class="control" >
+				<div class="field is-grouped is-grouped-centered" >
+					<div class="control is-expanded " >
 						<input name="pessoa_nome" container="body" type="text" id="pessoa_nome" placeholder="Nome" class="input"/>
 						<p id="pessoa_nome_help" class="help">Este campo não pode ser vazio</p>
-					</div
-				</div>
-				<div class="field mt-2">
-					<div class="control">
+					</div>
+					<div class="control is-expanded">
 						<input name="pessoa_email" type="text" id="pessoa_email" placeholder="Email" class="input">
 						<p id="pessoa_email_help" class="help">Este campo não pode ser vazio e deve ser um email válido</p>
 					</div>
@@ -95,22 +94,63 @@
 				</div>
 				<div class="field" >
 					<div class="control is-expanded">
-						<input name="pessoa_cpf" type="text" id="pessoa_cpf" class="input" placeholder="CPF" >
+						<input name="pessoa_cep" type="text" id="pessoa_cep" class="input" placeholder="CEP">
+						<p id="pessoa_cep_help" class="help">CEP inválido!</p>
 					</div>
 				</div>
-				<div class="field" >
+
+				<div class="field is-grouped is-grouped-centered" >
+					<div class="control is-expanded">
+						<input name="pessoa_rua" type="text" id="pessoa_rua" class="input" placeholder="Rua">
+						<p id="pessoa_rua_help" class="help">Este campo não dever ser vazio.</p>
+					</div>
+					<div class="control is-expanded">
+						<input name="pessoa_bairro" type="text" id="pessoa_bairro" class="input" placeholder="Bairro">
+						<p id="pessoa_bairro_help" class="help">Este campo não dever ser vazio.</p>
+					</div>
+					<div class="control is-expanded">
+						<input name="pessoa_numero_endereco" type="text" id="pessoa_numero_endereco" class="input" placeholder="Número">
+						<p id="pessoa_numero_endereco_help" class="help">Este campo não dever ser vazio.</p>
+					</div>
+				</div>
+				<div class="field is-grouped is-grouped-centered" >
+					<div class="control is-expanded">
+						<input name="pessoa_cidade" type="text" id="pessoa_cidade" class="input" placeholder="Cidade">
+						<p id="pessoa_cidade_help" class="help">Este campo não dever ser vazio.</p>
+					</div>
+					<div class="control is-expanded">
+						<input name="pessoa_estado" type="text" id="pessoa_estado" class="input" placeholder="Estado">
+						<p id="pessoa_estado_help" class="help">Este campo não dever ser vazio.</p>
+					</div>
+				</div>
+				<div class="field is-grouped is-grouped-centered" >
 					<div class="control is-expanded">
 						<input name="pessoa_rg" type="text" id="pessoa_rg"  maxlength="11" class="input" placeholder="RG" >
+						<p id="pessoa_rg_help" class="help">Este campo não pode ser vazio</p>
+					</div>
+					<div class="control is-expanded">
+						<input name="pessoa_cpf" type="text" id="pessoa_cpf" maxlength="14" onkeyup="cpfChange( this.value, this.id )" class="input" placeholder="CPF" >
+						<p id="pessoa_cpf_help" class="help">CPF inválido</p>
 					</div>
 				</div>
-				<div class="field" >
+				<div class="field is-grouped is-grouped-centered">
+					
 					<div class="control is-expanded">
-						<input name="pessoa_cnpj" type="text" id="pessoa_cnpj" class="input" placeholder="CNPJ" >
+						<input name="pessoa_cnpj" type="text" id="pessoa_cnpj" maxlength="18" onkeyup="cnpjChange( this.value, this.id )" class="input" placeholder="CNPJ" >
+						<p id="pessoa_cnpj_help" class="help">Este campo não pode ser vazio</p>
+					</div>
+					<div class="control is-expanded">
+						<input name="pessoa_nome_fantasia" type="text" id="pessoa_nome_fantasia" class="input" placeholder="Nome fantasia" >
+						<p id="pessoa_nome_fantasia_help" class="help">Este campo não pode ser vazio</p>
 					</div>
 				</div>
-				<div class="field is-expanded">
+				<div class="field is-grouped is-grouped-centered" >
 					<div class="control is-expanded">
-						<input name="pessoa_telefone" type="text" id="pessoa_telefone" maxlength="15" class="input" >
+						<input name="pessoa_data_nascimento" type="text" id="pessoa_data_nascimento" class="input" placeholder="Data de Nascimento" >
+						<p id="pessoa_data_nascimento_help" class="help">Este campo não pode ser vazio</p>
+					</div>
+					<div class="control is-expanded">
+						<input name="pessoa_telefone" type="text" id="pessoa_telefone" maxlength="15" class="input pr-6" >
 						<p id="pessoa_telefone_help" class="help">Este campo não pode ser vazio e deve ser um número de telefone válido</p>
 					</div>
 				</div>
@@ -123,9 +163,11 @@
 						</select>
 					</div>
 				</div>
-				<div class="field">
-					<input id="tipo_pessoa" type="checkbox" name="tipo_pessoa" value="false" class="switch">
-					<label for="tipo_pessoa">Pessoa Jurídica</label>
+				<div class="field is-grouped is-grouped-left">
+					<div class="control">
+						<input id="tipo_pessoa" type="checkbox" name="tipo_pessoa" value="false" class="switch">
+						<label for="tipo_pessoa">Pessoa Jurídica</label>
+					</div>
 				</div>
 				<div class="field" >
 					<button id="submit" type="button" class="button is-success is-responsive mt-2" >Salvar</button>
@@ -138,6 +180,12 @@
 		window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
 		window.$ = window.jQuery;
 	</script>
+	<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
+	integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
+	crossorigin="anonymous"
+	referrerpolicy="no-referrer"
+  ></script>
 	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
 	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
 	<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>

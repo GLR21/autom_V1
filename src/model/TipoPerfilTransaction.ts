@@ -37,7 +37,7 @@ class TipoPerfilTransaction
 							( res )=>
 							{ 
 								let typesList = new Array();
-								res.forEach
+								res.rows.forEach
 								(
 									element => 
 									{

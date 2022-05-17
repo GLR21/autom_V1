@@ -20,7 +20,6 @@ class JUtil
 			string = string.replace( key, replaces[key] );	
 		}
 
-		console.log( string );
 		return string;
 	}
 

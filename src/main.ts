@@ -8,6 +8,8 @@ import { TipoPerfilTransaction } from "./model/TipoPerfilTransaction";
 import { MarcasTransaction } from "./model/MarcasTransaction";
 import { PecasTransaction } from "./model/PecasTransaction";
 import { Pecas } from "./objects/Pecas";
+import { PessoaFisica } from "./objects/PessoaFisica";
+import { PessoaJuridica } from "./objects/PessoaJuridica";
 const util = JUtil;
 
 let win;
@@ -35,15 +37,57 @@ app.whenReady().then
 
 ipcMain.on( 'pessoa:add', async( e:any, item:any ) => 
 {
-	const pessoa = new Pessoa
-							(	item.id, 
-								item.nome,
-								item.email,
-								item.senha,
-								item.telefone,
-								item.sys_auth
-							);
-									
+
+	var pessoa;
+
+	var tipo_pessoa = item.tipo_pessoa == 'true' ? 1 : 0;
+	
+	if( item.tipo_pessoa == 'true' )
+	{
+
+		pessoa = new PessoaJuridica
+								(
+									item.id, 
+									item.nome,
+									item.email,
+									item.senha,
+									item.telefone,
+									item.sys_auth,
+									item.cep,
+									item.rua,
+									item.bairro,
+									item.numero_endereco,
+									item.cidade,
+									item.estado,
+									tipo_pessoa,
+									item.nome_fantasia,
+									item.cnpj,
+									item.data_registro
+								);
+	}
+	else
+	{
+		pessoa = new PessoaFisica
+								(	
+									item.id, 
+									item.nome,
+									item.email,
+									item.senha,
+									item.telefone,
+									item.sys_auth,
+									item.cep,
+									item.rua,
+									item.bairro,
+									item.numero_endereco,
+									item.cidade,
+									item.estado,
+									tipo_pessoa,
+									item.cpf,
+									item.rg,
+									item.data_nascimento
+								);	
+	}
+
 	transaction = new PessoaTransaction();
 	await transaction.store( pessoa ).then( ( res )=>
 	{
@@ -75,6 +119,7 @@ ipcMain.on( 'edit:list:pessoas', async( err, res )=>
 ipcMain.on( 'lista:pessoa:delete', async( err ,item )=>
 {	
 	transaction = new PessoaTransaction();
+	
 	await transaction.delete( item ).then
 	(
 		( res )=>

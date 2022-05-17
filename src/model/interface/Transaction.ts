@@ -19,7 +19,7 @@ class Transaction
 						( 
 							( res )=>
 							{
-								return res.rows;
+								return res;
 							} 
 						)
 						.catch

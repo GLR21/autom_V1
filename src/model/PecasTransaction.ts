@@ -88,7 +88,7 @@ class PecasTransaction
 				var pecas_arr = new Array();
 
 
-				await Promise.all( res.map( async( peca )=>
+				await Promise.all( res.rows.map( async( peca )=>
 				{
 					var marca_transaction = new MarcasTransaction();
 					var marca = await marca_transaction.get( peca.ref_marca );

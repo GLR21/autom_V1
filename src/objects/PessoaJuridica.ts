@@ -1,15 +1,15 @@
 import { Pessoa } from "./Pessoa";
 
-class PessoaFisica 
-    extends
-        Pessoa
+class PessoaJuridica
+	extends
+		Pessoa	
 {
 
-    cpf             :string;
-    rg              :string;
-    data_nascimento :Date;
+	nome_fantasia:string;
+	cnpj         :string;
+    data_registro:Date;
 
-    constructor
+	constructor
     ( 
         id              :Number|null = null,
         nome            :string,
@@ -24,16 +24,16 @@ class PessoaFisica
         cidade          :string,
         estado          :string,
         tipo_pessoa     :Number,
-        cpf             :string,
-        rg              :string,
-        data_nascimento :Date
+		nome_fantasia   :string,
+		cnpj            :string,
+        data_registro   :Date
     )
     {
         super( id, nome, email, senha, telefone, sys_auth, cep, rua, bairro,numero_endereco, cidade,estado, tipo_pessoa );
-        this.cpf                = cpf;
-        this.rg                 = rg;
-        this.data_nascimento    = data_nascimento;
-    }
+		this.cnpj 			= cnpj;
+		this.nome_fantasia 	= nome_fantasia;
+        this.data_registro  = data_registro
+	}
 }
 
-export { PessoaFisica };
+export  { PessoaJuridica };

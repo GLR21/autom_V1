@@ -160,7 +160,6 @@
 
 				ipcRenderer.on( 'lista:pecas:delete:response', ( err, res )=>
 				{
-					console.log( res );
 					if( res )
 					{
 						bulmaToast.toast({ message: 'Registro deletado com sucesso com sucesso', type: 'is-success', duration: 5000, closeOnClick: true, offsetTop: 15 });
@@ -177,8 +176,6 @@
 
 		function onEdit( id, marca_id )
 		{
-			console.log( id );
-			console.log( marca_id );
 			location.assign( `PecasForm.html?peca_id=${ id }&marca_id=${ marca_id }` );
 		}
 

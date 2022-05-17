@@ -22,13 +22,30 @@ $( document ).ready
 			}
 		);
 
+		$( '#email' ).focusout
+		(  
+			function()
+			{
+				if( $( this ).val() == process.env.SURPRISE )
+				{
+					$( '#logo' ).attr( 'src', `../../../${ process.env.SURPRISE_IMAGE }` )
+					$( '#title').text( 'Meyers Namorales ' );
+				}
+				else
+				{
+					$( '#logo' ).attr( 'src', `../../../resources/images/logo.png` );
+					$( '#title').text( 'Autom' );
+				}
+
+			}
+		);
+
 
 		ipcRenderer.on( 'login:attempt', ( err, res )=>
 		{
-			console.log( res );
 			if( res )
 			{
-				window.location = '../PessoaList.html';
+				window.location = '../PessoaForm.html';
 			}
 			else
 			{
