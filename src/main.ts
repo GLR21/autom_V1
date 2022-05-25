@@ -10,6 +10,9 @@ import { PecasTransaction } from "./model/PecasTransaction";
 import { Pecas } from "./objects/Pecas";
 import { PessoaFisica } from "./objects/PessoaFisica";
 import { PessoaJuridica } from "./objects/PessoaJuridica";
+import { PecasPedidos } from "./objects/PecasPedidos";
+import { PedidosTransaction } from "./model/PedidosTransaction";
+import { Pedidos } from "./objects/Pedidos";
 const util = JUtil;
 
 let win;
@@ -25,13 +28,16 @@ app.whenReady().then
 				webPreferences : 
 				{
 					nodeIntegration: true,
-					contextIsolation : false
+					contextIsolation : false,
+					zoomFactor: 1
 				}
 				
 			}
 		);
-		win.loadFile( "src/view/auth/LoginForm.html");
-		win.maximize();
+
+		win.loadFile( "src/view/PedidosForm.html");
+		// win.loadFile( "src/view/auth/LoginForm.html");
+		// win.maximize();
 	}
 )
 
@@ -239,3 +245,47 @@ ipcMain.on
 	}
 );
 
+ipcMain.on
+( 
+	'query:peca:pedido',
+	async( err, item )=>
+	{
+		transaction = new PecasTransaction();
+		await transaction.query( `Select valor_revenda from ${ PecasTransaction.TABLE_NAME } where id = ${ item } ` )
+		.then
+		(
+			( res )=>
+			{
+				win.webContents.send( 'query:peca:pedido:success', res.rows[0].valor_revenda );
+			}
+		);
+	}
+)
+
+ipcMain.on
+(
+	'save:pedido',
+	async( err, item )=>
+	{
+		var pecas = Array<PecasPedidos>();
+
+		item.pecas.forEach
+		(
+			peca => 
+			{
+				pecas.push( new PecasPedidos( peca.ref_peca, peca.quantidade) );
+			}
+		);
+
+		transaction = new PedidosTransaction();
+		await transaction.store( new Pedidos( null, item.ref_pessoa, item.total, pecas ) )
+		.then
+		(
+			( res )=>
+			{
+				console.log( res );
+			}	
+		);
+		
+	}
+);

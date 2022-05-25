@@ -100,6 +100,11 @@ class PecasTransaction
 		);
 	}
 
+	async query(query_string: string): Promise<any> 
+	{
+		return await super.query( query_string );	
+	}
+
 }
 
 export { PecasTransaction };

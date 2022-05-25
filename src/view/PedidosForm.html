@@ -1,0 +1,345 @@
+<html lang="pt-BR" style="overflow-y: hidden;">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=4">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+		<link rel="stylesheet" href="../../node_modules/intl-tel-input/build/css/intlTelInput.css">
+		<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
+		<link rel="stylesheet" href="../../resources/css/bulma-switch.min_working.css">
+		<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> -->
+		<title>Autom</title>
+	</head>
+	<body >
+		<nav class="navbar has-shadow is-primary" role="navigation" >
+			<div class="navbar-brand">
+				<a href="" class="navbar-item" style="cursor: none;pointer-events: none;user-select: none;">
+					<figure class="is-rounded">
+						<img src="../../resources/images/logo.png" alt="">
+					</figure>
+				</a>
+			</div>
+			<div class="navbar-menu">
+				<div class="navbar-start">
+					<div class="navbar-item has-dropdown is-hoverable">
+						<div class="navbar-link">
+							Menu
+						</div>
+						<div class="navbar-dropdown">
+							<a class="navbar-item" href="PessoaList.html" >
+								<i class="fa-solid fa-users"></i>
+								<p class="ml-2">
+									Pessoas
+								</p>
+							</a>
+							<a class="navbar-item" href="PessoaForm.html"> 
+								<i class="fa-solid fa-user" ></i>
+								<p class="ml-2" >
+									Cadastro de pessoas
+								</p>
+							</a>
+							<a class="navbar-item" href="PecasList.html" >
+								<i class="fa-solid fa-gears"></i>
+								<p class="ml-2">
+									Peças
+								</p>
+							</a>
+							<a class="navbar-item" href="PecasForm.html" >
+								<i class="fa-solid fa-gear"></i>
+								<p class="ml-2">
+									Cadastro de peças
+								</p>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="navbar-end">
+					<div class="navbar-item is-centered">
+						<span style="pointer-events: all ;cursor: pointer;" id="logout" class="icon pr-5" title="Logout">
+							<i class="fa-solid fa-power-off is-large"></i>
+						</span>
+					</div>
+				</div>
+			</div>
+		</nav>
+		
+		<div class="container is-fluid">
+			<div class="column is-half is-offset-one-quarter">
+				<h1 class="title mt-5" >Pedido</h1>
+			</div>
+			<div class="column is-half is-offset-one-quarter  ">
+				<div class="column is-half ">
+					<div class="colunm">
+						<h3 class="subtitle">
+							Cliente:
+						</h3>
+					</div>
+					<select class="select mt-3" name="cliente" id="peca_cliente_id">
+						<option value="0">Selecione um cliente</option>
+					</select>
+				</div>
+				<div class="column is-half ">
+					<h3 class="subtitle" >Itens:</h3>
+				</div>
+				<div id="container" class="box" style="overflow-y: auto;max-height: 300px;box-shadow: none;">
+					<div name="control_1" class="control">
+						<div class="field is-grouped">
+							<select id="pecas_select_1" class="select is-small">
+								<option value="0">
+									Selecione um produto
+								</option>
+							</select>
+							<input placeholder="Quantidade" type="text" name="quantidade" class="input is-small">
+							<input placeholder="Valor" type="text" name="valor" class="input is-small" disabled>
+							<button id="increment_control_1" class="button is-small" ><span class="icon-text"><span class="icon has-text-success" ><i class="fa fa-plus" ></i></i></span></span></button>
+						</div>
+					</div>
+				</div>
+				<div class="column is-half">
+					<button id="save" class="button is-primary">Salvar</button>
+				</div>
+			</div>
+		</div>
+				
+			
+
+		
+
+		<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+		<script>
+			window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
+			window.$ = window.jQuery;
+		</script>
+		<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
+		<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
+		<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
+		<script src="../../resources/JS/view.js"></script>
+		<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
+		<script>
+			const electron = require('electron');
+			const { ipcRenderer } = electron;
+			count = 1;
+			
+			var quantidade  =document.getElementsByName( 'quantidade' );
+			
+
+			function increment( target )
+			{
+				++count;
+				var control = document.createElement( 'DIV' );
+				$( control ).attr( 'name', `control_${count}` );
+				$( control ).addClass( 'control' );
+
+				var field   = document.createElement( 'DIV' );
+				$( field ).addClass( 'field is-grouped' ); 
+				
+				$( control ).append( field );
+
+				var select  = document.createElement( 'SELECT' );
+				$( select ).addClass( 'select is-small' );
+
+				var default_option = document.createElement( 'OPTION' );
+				$( default_option ).text( 'Selecione um produto' );
+				$( default_option ).attr( 'value', 0 );
+
+				$( select ).append( default_option );
+
+				load_pecas( select );
+
+				$( field ).append( select );
+
+				var input_1 = document.createElement( 'INPUT' );
+				$( input_1 ).attr( 'placeholder', 'Quantidade' );
+				$( input_1 ).attr( 'type', 'text' );
+				$( input_1 ).attr( 'name', `quantidade_${count}` );
+				$( input_1 ).addClass( 'input is-small' );
+				setInputFilter( input_1 , function(value)
+				{
+					return /^-?\d*$/.test(value); 
+				});
+
+				$( field ).append( input_1 );
+
+				var input_2 = document.createElement( 'INPUT' );
+				$( input_2 ).attr( 'placeholder', 'Valor' );
+				$( input_2 ).attr( 'name', `valor_${count}` );
+				$( input_2 ).attr( 'type', 'text' );
+				$( input_2 ).prop( 'disabled',true );
+				$( input_2 ).addClass( 'input is-small' );
+				setInputFilter( input_2 , function(value)
+				{
+					return /^-?\d*$/.test(value); 
+				});				
+
+				$( field ).append( input_2 );
+
+				var div_space = document.createElement( 'DIV' );
+				$( div_space ).addClass( 'mr-6' );
+				
+				var button_decrement = document.createElement( 'BUTTON' );
+				$( button_decrement ).attr( 'id', `decrement_control_${ count }` );
+				$( button_decrement ).addClass( 'button is-small' );
+
+				var minus_icon = document.createElement( 'SPAN' );
+				var minus_icon_inner = document.createElement( 'SPAN' );
+				var minus_icon_svg   = document.createElement( 'I' );
+
+				$( minus_icon ).addClass( 'icon-text' ); 
+				$( minus_icon_inner ).addClass( 'icon has-text-danger' );
+				$( minus_icon_svg ).addClass( 'fa fa-minus' );
+
+				$( minus_icon_inner ).append( minus_icon_svg );
+
+				$( minus_icon ).append( minus_icon_inner );
+
+				$( button_decrement ).append( minus_icon );
+
+				$( div_space ).append( button_decrement );
+				$( field ).append( div_space );
+
+				$( target ).append( control );
+			}
+			
+			$(document).ready
+			(
+				function()
+				{
+
+					load_pecas( document.getElementById( 'pecas_select_1' ) );
+					
+					setInputFilter( document.getElementsByName( 'quantidade' )[0] , function(value)
+					{
+						return /^-?\d*$/.test(value); 
+					});
+					
+					ipcRenderer.send( 'load:lista:pessoas' );
+					ipcRenderer.on( 'load:lista:pessoas:success', (err, item )=>
+					{
+						item.forEach( client =>
+						{
+							var option = document.createElement( 'OPTION' );
+							$( option ).text( client.nome );
+							$( option ).attr( 'value', client.id );
+							$( '#peca_cliente_id' ).append( option );
+						});
+					} );				
+					$( '#container' ).on(
+						'click',
+						'button',
+						function( event )
+						{  
+							var target = event.currentTarget;
+							var target_id = target.id;
+							var parent = $(  $( event.currentTarget ).parents()[1] );
+							
+							if( target_id.includes( 'increment' ) )
+							{
+								increment( parent.parent() );
+							}
+							else if( target_id.includes( 'decrement' ) )
+							{
+								if( target_id == 'decrement_control_1' )
+								{
+								}
+								else
+								{
+									parent.parent().remove();
+								}
+							}
+						} 
+					);
+
+					$( '#container'  ).on(  'change', 'input', function( e )
+					{
+						var target = $( e.currentTarget );
+						var option = target.siblings( 'select' )[0].value;
+						var input_value = $( target.siblings('input')[0] );
+						
+						if( target.attr( 'name' ).includes( 'quantidade' ) )
+						{
+							if( option != 0 )
+							{
+								ipcRenderer.send( 'query:peca:pedido', option );
+								let eventTarget = ipcRenderer.on( 'query:peca:pedido:success', (err, item )=>
+								{
+									input_value.val(  formatAmount( parseFloat( parseFloat( item ) *  target.val() ).toFixed( 2 ).toString() )  );
+									eventTarget.removeAllListeners( 'query:peca:pedido:success' );
+								} );
+							}
+
+							input_value.val( formatAmount( '0' ) );
+							
+						}
+					});
+
+					$( '#save' ).click
+					(  
+						( )=>
+						{
+							if( $( '#peca_cliente_id' )[0].value  != 0 )
+							{
+								var total= 0;
+								var pedido = 
+								{
+									ref_pessoa: $( '#peca_cliente_id' )[0].value,
+									pecas:[]
+								};
+
+								Array.from( $( '#container input[name^=\"quantidade\"' ) ).forEach
+								(
+									element => 
+									{
+										var el = $( element );
+
+										if( el.val() != 0 )
+										{
+											var produto = el.siblings( 'select' )[0].value;
+
+											pedido.pecas.push( { ref_peca: produto, quantidade: el.val()  } );
+											
+
+											total+=parseFloat( el.siblings( 'input' )[0].value.replace( '.', '' ).replace( ',','.' ) );
+										}
+										
+									}
+								);
+								
+								pedido.total = total.toFixed( 2 );
+								ipcRenderer.send( 'save:pedido', pedido );
+							}
+
+						}
+					);
+
+				}
+			);
+
+			function load_pecas( target )
+			{
+				ipcRenderer.send( 'load:lista:pecas' );
+				let eventTarget =  ipcRenderer.on
+				( 
+					'load:lista:pecas:success',
+					( err,item )=>
+					{
+						item.forEach
+						(
+							element => 
+							{
+								var option = document.createElement( 'option' );
+								$( option ).attr( 'value', element.id );
+								option.innerText = element.nome;
+								$( target ).append( option );
+							}
+						);
+
+						eventTarget.removeAllListeners( 'load:lista:pecas:success' );
+					}
+				);
+			}
+
+		</script>
+		<script src="../../resources/JS/autum.js"></script>
+	</body>
+</html>
