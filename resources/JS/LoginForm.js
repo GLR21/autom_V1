@@ -43,7 +43,7 @@ $( document ).ready
 
 		ipcRenderer.on( 'login:attempt', ( err, res )=>
 		{
-			if( true )
+			if( res )
 			{
 				window.location = '../PessoaForm.html';
 			}

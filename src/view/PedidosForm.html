@@ -51,6 +51,12 @@
 									Cadastro de peças
 								</p>
 							</a>
+							<a class="navbar-item" href="PedidosForm.html" >
+								<i class="fa-solid fa-basket-shopping"></i>
+								<p class="ml-2">
+									Pedidos
+								</p>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -297,11 +303,8 @@
 											var produto = el.siblings( 'select' )[0].value;
 
 											pedido.pecas.push( { ref_peca: produto, quantidade: el.val()  } );
-											
-
 											total+=parseFloat( el.siblings( 'input' )[0].value.replace( '.', '' ).replace( ',','.' ) );
 										}
-										
 									}
 								);
 								
@@ -314,6 +317,21 @@
 
 				}
 			);
+
+			ipcRenderer.on( 'save:pedido:success', ( err, item )=>
+			{
+				if( item )
+				{
+					bulmaToast.toast({ message: 'Registro salvo com sucesso', type: 'is-success', duration: 4000, closeOnClick: true, offsetTop: 15 });
+					location.reload();
+					//setTimeout( location.assign( 'PessoaList.html' ), 4500 );
+				}
+				else
+				{
+					bulmaToast.toast({ message: 'Ocorreu um erro, favor entrar em contato com o suporte.', type: 'is-danger', duration: 3500, closeOnClick: true, offsetTop: 15 });
+					
+				}
+			} );
 
 			function load_pecas( target )
 			{

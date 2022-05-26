@@ -29,15 +29,15 @@ app.whenReady().then
 				{
 					nodeIntegration: true,
 					contextIsolation : false,
-					zoomFactor: 1
+					
 				}
 				
 			}
 		);
-
-		win.loadFile( "src/view/PedidosForm.html");
-		// win.loadFile( "src/view/auth/LoginForm.html");
-		// win.maximize();
+		win.setMenuBarVisibility(false);
+		//win.loadFile( "src/view/PedidosForm.html");
+		win.loadFile( "src/view/auth/LoginForm.html");
+		win.maximize();
 	}
 )
 
@@ -283,8 +283,8 @@ ipcMain.on
 		(
 			( res )=>
 			{
-				console.log( res );
-			}	
+				win.webContents.send( 'save:pedido:success', res );
+			}	 
 		);
 		
 	}
