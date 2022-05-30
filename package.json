@@ -17,6 +17,7 @@
     "electron": "^17.1.0"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "@fortawesome/fontawesome-free": "^6.1.1",
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.23",
@@ -26,6 +27,7 @@
     "bulma": "^0.9.3",
     "bulma-extensions": "^6.2.7",
     "bulma-toast": "^2.4.1",
+    "datatables-bulma": "^1.0.1",
     "dotenv": "^16.0.0",
     "intl-tel-input": "^17.0.16",
     "jquery": "^3.6.0",

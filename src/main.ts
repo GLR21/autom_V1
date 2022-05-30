@@ -14,30 +14,65 @@ import { PecasPedidos } from "./objects/PecasPedidos";
 import { PedidosTransaction } from "./model/PedidosTransaction";
 import { Pedidos } from "./objects/Pedidos";
 const util = JUtil;
+const remoteMain = require('@electron/remote/main');
+
 
 let win;
 let transaction;
 
-app.whenReady().then
-(
-	() => 
-	{
-		win = new BrowserWindow
+function createWindow()
+{
+	win = new BrowserWindow
+	(
+		{
+			webPreferences : 
+			{
+				nodeIntegration: true,
+				contextIsolation : false,
+				frame: false,
+				alwaysOnTop: true,
+				enableRemoteModule: true
+			}
+				
+		}
+	);
+
+		remoteMain.initialize();
+		remoteMain.enable( win.webContents  );
+		win.setMenuBarVisibility(false);
+		win.loadFile( "src/view/auth/LoginForm.html");
+		
+		
+
+		var splash = new BrowserWindow
 		(
 			{
-				webPreferences : 
-				{
-					nodeIntegration: true,
-					contextIsolation : false,
-					
-				}
-				
+				witdh: 800,
+				heigth:800,
+				transparent: true,
+				frame: false,
+				alwaysOnTop: true
 			}
-		);
-		win.setMenuBarVisibility(false);
-		//win.loadFile( "src/view/PedidosForm.html");
-		win.loadFile( "src/view/auth/LoginForm.html");
-		win.maximize();
+		)
+
+		splash.loadFile( "src/view/auth/splash.html");
+		splash.center();
+		setTimeout( function()
+		{
+			splash.close();
+			win.center();
+			win.show();
+			win.maximize();
+		}, 5000 );
+
+}
+
+
+app.whenReady().then
+(
+	()=>
+	{
+		createWindow();
 	}
 )
 

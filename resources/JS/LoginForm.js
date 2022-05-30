@@ -45,7 +45,7 @@ $( document ).ready
 		{
 			if( res )
 			{
-				window.location = '../PessoaForm.html';
+				window.location = '../Menu.html';
 			}
 			else
 			{
