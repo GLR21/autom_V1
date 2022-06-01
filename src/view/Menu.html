@@ -74,12 +74,12 @@
 					</div>
 					<div class="tile is-parent">
 						<article class="tile is-child">
-							<a href="" class="button is-large is-info is-light" style="width: 12em;">
+							<button href="" id="relatorio_pecas_btn" class="button is-large is-info is-light" style="width: 12em;">
 								<img style="width: 1em;height: 1em;" class="" src="../../resources/images/file-chart-outline.png" alt="">
 								<p class="ml-2">
 									Relatório de peças
 								</p>
-							</a>
+							</button>
 						</article>
 						<article class="tile is-child">
 							<a href="" class="button is-large is-info is-light" style="width: 12em;">
@@ -100,7 +100,7 @@
 							</a>
 						</article>
 						<article class="tile is-child">
-							<a href="" class="button is-large is-info is-light" style="width: 12em;">
+							<a href="" id="pedido_peca" class="button is-large is-info is-light" style="width: 12em;">
 								<img style="width: 1em;height: 1em;"  src="../../resources/images/chart-pie.png" alt="" srcset="">
 								<p class="ml-2">
 									Pedidos por peça
@@ -121,5 +121,95 @@
 			  </div>
 			</div>
 		  </div>
+
+		<!--Modals-->
+		  <div id="relatorio_pecas_modal"  class="modal">
+			  <div class="modal-background"></div>
+			  <div class="modal-content has-background-white py-5 px-5">
+					<h3 class="title mb-6">Relatório de Peças</h3>
+				 	<p class="control has-icons-left">
+						<input id="relatorio_pecas_path" name="relatorio_pecas_path" type="text" class="input is-rounded" placeholder="Selecione o diretório onde deseja salvar o relatório" readonly>
+						<span class="icon is-small is-left">
+							<i class="fa-solid fa-folder"></i>	
+						</span>
+						<button id="relatorio_pecas_modal_gnrt_report" style="width: 100%;" class="button mt-5 is-success  is-expanded">Gerar relatório</button> 
+					</p>
+			  </div>
+		  </div>
+		<!--End_Modals-->
+		<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+		<script>
+			window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
+			window.$ = window.jQuery;
+		</script>
+		<script>
+			const electron = require('electron');
+			const { ipcRenderer } = electron;
+			const relatorio_pecas_btn = $( '#relatorio_pecas_btn' );
+			var open_dir;			
+
+			$( document ).ready
+			(
+				()=>
+				{
+					$( '#relatorio_pecas_btn' ).click
+					(
+						()=>
+						{
+							var modal = $( `#`+relatorio_pecas_btn.attr( 'id' ).replace( 'btn', 'modal' ) );
+							modal.addClass( 'is-active' );
+						}
+					);
+
+					$( document ).keydown( ( e )=>
+					{
+						if( e.key == "Escape" )
+						{
+							var modals = document.querySelectorAll( '.modal' );
+
+							modals.forEach
+							(
+								modal=>
+								{
+									if( $( modal).hasClass( 'is-active' ) )
+									{
+										$( modal ).removeClass( 'is-active' );
+									}
+								}
+							)
+						}
+					} );
+
+					$( '#relatorio_pecas_path' ).click
+					(
+						()=>
+						{
+							ipcRenderer.send( 'open:dir', { target:'relatorio_pecas_path' } );
+						}
+					)
+
+					open_dir = ipcRenderer.on( 'open:dir:select', function( err, item )
+					{
+						if( !item.path.canceled )
+						{
+							$( `#${item.target}` ).val( item.path.filePaths[0] );
+						}
+						open_dir.removeAllListeners( 'open:dir:select' );
+					} );	
+
+
+					
+
+				}
+			)
+
+
+			// document.getElementById( 'pedido_peca' ).addEventListener( 'click', ()=>
+			// {
+			// 	ipcRenderer.send( 'open:dir' );
+			// } );
+			
+
+		</script>
 	</body>
 </html>

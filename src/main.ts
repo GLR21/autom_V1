@@ -1,4 +1,5 @@
-const electron = require('electron');
+import * as electron from 'electron';
+import * as remoteMain from '@electron/remote/main';
 const { app, BrowserWindow , ipcMain } = electron ;
 import { JUtil  } from "./util/JUtil";
 import 'dotenv/config'
@@ -13,68 +14,90 @@ import { PessoaJuridica } from "./objects/PessoaJuridica";
 import { PecasPedidos } from "./objects/PecasPedidos";
 import { PedidosTransaction } from "./model/PedidosTransaction";
 import { Pedidos } from "./objects/Pedidos";
+import { dialog } from 'electron';
+import { ReportsController } from './reports/ReportsController';
 const util = JUtil;
-const remoteMain = require('@electron/remote/main');
+ReportsController.generateReport( ReportsController.RELATORIO_PECAS, null );
 
 
 let win;
 let transaction;
 
-function createWindow()
+async function createWindow()
 {
-	win = new BrowserWindow
+	
+	remoteMain.initialize();
+	win = new electron.BrowserWindow
 	(
 		{
 			webPreferences : 
 			{
+				plugins:true,
 				nodeIntegration: true,
 				contextIsolation : false,
-				frame: false,
-				alwaysOnTop: true,
-				enableRemoteModule: true
+				webSecurity: false 
+				
 			}
 				
 		}
 	);
 
-		remoteMain.initialize();
+		
 		remoteMain.enable( win.webContents  );
 		win.setMenuBarVisibility(false);
 		win.loadFile( "src/view/auth/LoginForm.html");
 		
 		
 
-		var splash = new BrowserWindow
+		var splash = new electron.BrowserWindow
 		(
 			{
-				witdh: 800,
-				heigth:800,
+				// width: 800,
+				// height:500,
 				transparent: true,
 				frame: false,
 				alwaysOnTop: true
 			}
 		)
-
+		
 		splash.loadFile( "src/view/auth/splash.html");
 		splash.center();
-		setTimeout( function()
-		{
-			splash.close();
-			win.center();
-			win.show();
-			win.maximize();
-		}, 5000 );
+		setTimeout
+		( 
+			function()
+			{
+				splash.close();
+				win.center();
+				win.show();
+				win.maximize();
+			}
+		, await build() );
 
 }
 
+async function build()
+{
+	return performance.now() * 20;
+}
 
 app.whenReady().then
 (
-	()=>
+	async ()=>
 	{
-		createWindow();
+		await createWindow();
 	}
 )
+
+ipcMain.on( 'open:dir', async( event,arg )=>
+{
+	const result = await dialog.showOpenDialog( win, 
+	{
+		properties: ['openDirectory','createDirectory','treatPackageAsDirectory','promptToCreate']
+	} );
+
+	win.webContents.send( 'open:dir:select', { target:arg.target, path:result } );
+
+} );
 
 ipcMain.on( 'pessoa:add', async( e:any, item:any ) => 
 {
