@@ -17,7 +17,7 @@ import { Pedidos } from "./objects/Pedidos";
 import { dialog } from 'electron';
 import { ReportsController } from './reports/ReportsController';
 const util = JUtil;
-ReportsController.generateReport( ReportsController.RELATORIO_PECAS, null );
+
 
 
 let win;
@@ -26,27 +26,7 @@ let transaction;
 async function createWindow()
 {
 	
-	remoteMain.initialize();
-	win = new electron.BrowserWindow
-	(
-		{
-			webPreferences : 
-			{
-				plugins:true,
-				nodeIntegration: true,
-				contextIsolation : false,
-				webSecurity: false 
-				
-			}
-				
-		}
-	);
-
-		
-		remoteMain.enable( win.webContents  );
-		win.setMenuBarVisibility(false);
-		win.loadFile( "src/view/auth/LoginForm.html");
-		
+	
 		
 
 		var splash = new electron.BrowserWindow
@@ -60,19 +40,38 @@ async function createWindow()
 			}
 		)
 		
-		splash.loadFile( "src/view/auth/splash.html");
-		splash.center();
-		setTimeout
-		( 
-			function()
-			{
-				splash.close();
-				win.center();
-				win.show();
-				win.maximize();
-			}
-		, await build() );
+	splash.loadFile( "src/view/auth/splash.html");
+	splash.center();
+	setTimeout
+	( 
+		function()
+		{
+			remoteMain.initialize();
+			win = new electron.BrowserWindow
+			(
+				{
+					webPreferences : 
+					{
+						plugins:true,
+						nodeIntegration: true,
+						contextIsolation : false,
+						webSecurity: false 
+						
+					}
+						
+				}
+			);
+				
+			remoteMain.enable( win.webContents  );
+			win.loadFile( "src/view/auth/LoginForm.html");
+			win.center();
+			win.show();
+			win.maximize();	
 
+			splash.close();
+
+		}
+	, 5000 );
 }
 
 async function build()
@@ -345,5 +344,15 @@ ipcMain.on
 			}	 
 		);
 		
+	}
+);
+
+ipcMain.on
+(
+	'gerar:relatorio:pecas',
+	( err, item )=>
+	{
+		console.log( item.path );
+		ReportsController.generateReport( ReportsController.RELATORIO_PECAS, null );
 	}
 );

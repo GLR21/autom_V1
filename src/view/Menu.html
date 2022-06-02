@@ -194,11 +194,24 @@
 						{
 							$( `#${item.target}` ).val( item.path.filePaths[0] );
 						}
-						open_dir.removeAllListeners( 'open:dir:select' );
 					} );	
 
+					$( '#relatorio_pecas_modal_gnrt_report' ).click
+					(
+						()=>
+						{
+							console.log( $('#relatorio_pecas_path').val() != '' );
+							if( $('#relatorio_pecas_path').val() != '' )
+							{
+								ipcRenderer.send( 'gerar:relatorio:pecas', { path:$('#relatorio_pecas_path').val() } );
+							}
+							else
+							{
 
-					
+							}
+							
+						}
+					);
 
 				}
 			)
