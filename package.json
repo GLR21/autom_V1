@@ -13,7 +13,6 @@
   "author": "Gabriel Lange Ramos",
   "license": "ISC",
   "devDependencies": {
-    "@types/pdfkit": "^0.12.6",
     "@vizuaalog/bulmajs": "^0.12.1",
     "electron": "^17.1.0"
   },

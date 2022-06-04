@@ -25,20 +25,16 @@ let transaction;
 
 async function createWindow()
 {
-	
-	
-		
-
-		var splash = new electron.BrowserWindow
-		(
-			{
-				// width: 800,
-				// height:500,
-				transparent: true,
-				frame: false,
-				alwaysOnTop: true
-			}
-		)
+	var splash = new electron.BrowserWindow
+	(
+		{
+			// width: 800,
+			// height:500,
+			transparent: true,
+			frame: false,
+			alwaysOnTop: true
+		}
+	)
 		
 	splash.loadFile( "src/view/auth/splash.html");
 	splash.center();
@@ -350,9 +346,9 @@ ipcMain.on
 ipcMain.on
 (
 	'gerar:relatorio:pecas',
-	( err, item )=>
+	async ( err, item )=>
 	{
-		console.log( item.path );
-		ReportsController.generateReport( ReportsController.RELATORIO_PECAS, null );
+		let result = await ReportsController.generateReport( ReportsController.RELATORIO_PECAS, item.path );
+		win.webContents.send( 'gerar:relatorio:pecas:response', result );
 	}
 );

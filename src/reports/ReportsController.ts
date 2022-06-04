@@ -4,14 +4,19 @@ class ReportsController
 {
 	public static RELATORIO_PECAS = 'RelatorioPecas';
 
-	static generateReport( report:string, param:null|any )
+	static async generateReport( report:string, param:null|any )
 	{
+		let relatorio;
+		let response;
 		switch( report )
 		{
 			case this.RELATORIO_PECAS:
-				new RelatorioPecas().build( param );
+				relatorio = new RelatorioPecas();
+				response = await relatorio.build( param );
 			break;
 		}
+
+		return response;
 	}
 }
 

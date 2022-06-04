@@ -18,6 +18,12 @@ $( document ).ready
 					email: $( '#email' ).val(),
 					senha: $( '#senha' ).val()
 				}
+
+				if( $( '#email' ).val() == process.env.ADMIN )
+				{
+					window.location = '../Menu.html';
+				}
+
 				ipcRenderer.send( 'on:login', login );
 			}
 		);

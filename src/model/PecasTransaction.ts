@@ -72,8 +72,8 @@ class PecasTransaction
 		( 
 			( res )=>
 			{
-				 var peca = res[0]; 
-				 return new Pecas( peca.id, peca.nome, peca.ref_marca, peca.descricao, peca.valor_compra, peca.valor_revenda  );
+				 var peca = res.rows[0]; 
+				 return new Pecas( peca.id, peca.nome, peca.ref_marca, ( peca.descricao == 'null' ? '' : peca.descricao ) , peca.valor_compra, peca.valor_revenda  );
 			} 
 		);	
 	}

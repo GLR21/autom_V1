@@ -128,6 +128,13 @@
 			  <div class="modal-content has-background-white py-5 px-5">
 					<h3 class="title mb-6">Relatório de Peças</h3>
 				 	<p class="control has-icons-left">
+						<input id="relatorio_pecas_file_name" name="relatorio_pecas_file_name" type="text" class="input is-rounded" placeholder="Nome">
+						<span class="icon is-small is-left">
+							<i class="fa-solid fa-folder"></i>	
+						</span>
+					 </p>
+					<p class="control has-icons-left">
+						
 						<input id="relatorio_pecas_path" name="relatorio_pecas_path" type="text" class="input is-rounded" placeholder="Selecione o diretório onde deseja salvar o relatório" readonly>
 						<span class="icon is-small is-left">
 							<i class="fa-solid fa-folder"></i>	
@@ -142,6 +149,7 @@
 			window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
 			window.$ = window.jQuery;
 		</script>
+		<script src="../../node_modules/@vizuaalog/bulmajs/dist/alert.js"></script>
 		<script>
 			const electron = require('electron');
 			const { ipcRenderer } = electron;
@@ -200,29 +208,67 @@
 					(
 						()=>
 						{
-							console.log( $('#relatorio_pecas_path').val() != '' );
-							if( $('#relatorio_pecas_path').val() != '' )
+							
+							if( $('#relatorio_pecas_path').val() != '' && $('#relatorio_pecas_file_name').val() != '' )
 							{
-								ipcRenderer.send( 'gerar:relatorio:pecas', { path:$('#relatorio_pecas_path').val() } );
+								let name = $('#relatorio_pecas_file_name').val();
+								name = name.replace( /\s/g ,'_' );								
+								let path = $('#relatorio_pecas_path').val() +'/' + ( name.indexOf( '.' ) > 0 ? name.replace( name.substring( name.indexOf( '.' ) ), '' ) : name) + '.pdf';
+								ipcRenderer.send( 'gerar:relatorio:pecas', { path:path } );
 							}
 							else
 							{
-
+								Bulma().alert
+								( 
+									{
+										type   : 'danger',
+										title  : 'Atenção!',
+										body   : 'Deve ser informado o nome do arquivo e o diretório onde deseja salvar.',
+										confirm: 'Ok'
+									}
+								);
 							}
 							
 						}
 					);
 
+					ipcRenderer.on( 'gerar:relatorio:pecas:response', ( err, item )=>
+					{
+						if( item )
+						{
+							Bulma().alert
+							( 
+								{
+									type   : 'success',
+									title  : 'Relatório gerado com sucesso',
+									confirm:
+									{
+										label: 'Ok',
+										onClick: function()
+										{
+											$( '#relatorio_pecas_modal' ).removeClass( 'is-active' )
+										}
+									} 
+								}
+							);
+						}
+						else
+						{
+							Bulma().alert
+							( 
+								{
+									type   : 'danger',
+									title  : 'Atenção!',
+									body   : 'Houve um erro ao gerar o relatório',
+									confirm: 'Ok'
+								}
+							);
+						}
+					} )
+
 				}
 			)
-
-
-			// document.getElementById( 'pedido_peca' ).addEventListener( 'click', ()=>
-			// {
-			// 	ipcRenderer.send( 'open:dir' );
-			// } );
-			
-
 		</script>
+		<script src="../../resources/JS/autum.js"></script>
 	</body>
 </html>
