@@ -74,7 +74,7 @@
 					</div>
 					<div class="tile is-parent">
 						<article class="tile is-child">
-							<button href="" id="relatorio_pecas_btn" class="button is-large is-info is-light" style="width: 12em;">
+							<button id="relatorio_pecas_btn" class="button is-large is-info is-light" style="width: 12em;">
 								<img style="width: 1em;height: 1em;" class="" src="../../resources/images/file-chart-outline.png" alt="">
 								<p class="ml-2">
 									Relatório de peças
@@ -82,12 +82,12 @@
 							</button>
 						</article>
 						<article class="tile is-child">
-							<a href="" class="button is-large is-info is-light" style="width: 12em;">
+							<button id="relatorio_pedidos_btn" class="button is-large is-info is-light" style="width: 12em;">
 								<img style="width: 1em;height: 1em;" class="" src="../../resources/images/file-chart-outline.png" alt="">
 								<p class="ml-2">
 									Relatório de pedidos
 								</p>
-							</a>
+							</button>
 						</article>
 					</div>
 					<div class="tile is-parent">
@@ -143,6 +143,28 @@
 					</p>
 			  </div>
 		  </div>
+
+		  <div id="relatorio_pedidos_modal"  class="modal">
+			<div class="modal-background"></div>
+			<div class="modal-content has-background-white py-5 px-5">
+				  <h3 class="title mb-6">Relatório de Pedidos</h3>
+				   <p class="control has-icons-left">
+					  <input id="relatorio_pedidos_file_name" name="relatorio_pedidos_file_name" type="text" class="input is-rounded" placeholder="Nome">
+					  <span class="icon is-small is-left">
+						  <i class="fa-solid fa-folder"></i>	
+					  </span>
+				   </p>
+				  <p class="control has-icons-left">
+					  
+					  <input id="relatorio_pedidos_path" name="relatorio_pedidos_path" type="text" class="input is-rounded" placeholder="Selecione o diretório onde deseja salvar o relatório" readonly>
+					  <span class="icon is-small is-left">
+						  <i class="fa-solid fa-folder"></i>	
+					  </span>
+					  <button id="relatorio_pedidos_modal_gnrt_report" style="width: 100%;" class="button mt-5 is-success  is-expanded">Gerar relatório</button> 
+				  </p>
+			</div>
+		</div>
+
 		<!--End_Modals-->
 		<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
 		<script>
@@ -154,6 +176,7 @@
 			const electron = require('electron');
 			const { ipcRenderer } = electron;
 			const relatorio_pecas_btn = $( '#relatorio_pecas_btn' );
+			const relatorio_pedidos_btn = $( '#relatorio_pedidos_btn' );
 			var open_dir;			
 
 			$( document ).ready
@@ -168,6 +191,15 @@
 							modal.addClass( 'is-active' );
 						}
 					);
+
+					$( '#relatorio_pedidos_btn' ).click
+					(
+						()=>
+						{
+							var modal = $( `#`+relatorio_pedidos_btn.attr( 'id' ).replace( 'btn', 'modal' ) );
+							modal.addClass( 'is-active' );
+						}
+					)
 
 					$( document ).keydown( ( e )=>
 					{
@@ -193,6 +225,14 @@
 						()=>
 						{
 							ipcRenderer.send( 'open:dir', { target:'relatorio_pecas_path' } );
+						}
+					)
+
+					$( '#relatorio_pedidos_path' ).click
+					(
+						()=>
+						{
+							ipcRenderer.send( 'open:dir', { target:'relatorio_pedidos_path' } );
 						}
 					)
 
@@ -228,9 +268,36 @@
 									}
 								);
 							}
-							
 						}
 					);
+
+					$( '#relatorio_pedidos_modal_gnrt_report' ).click
+					(
+						()=>
+						{
+							
+							if( $('#relatorio_pedidos_path').val() != '' && $('#relatorio_pedidos_file_name').val() != '' )
+							{
+								let name = $('#relatorio_pedidos_file_name').val();
+								name = name.replace( /\s/g ,'_' );								
+								let path = $('#relatorio_pedidos_path').val() +'/' + ( name.indexOf( '.' ) > 0 ? name.replace( name.substring( name.indexOf( '.' ) ), '' ) : name) + '.pdf';
+								ipcRenderer.send( 'gerar:relatorio:pedidos', { path:path } );
+							}
+							else
+							{
+								Bulma().alert
+								( 
+									{
+										type   : 'danger',
+										title  : 'Atenção!',
+										body   : 'Deve ser informado o nome do arquivo e o diretório onde deseja salvar.',
+										confirm: 'Ok'
+									}
+								);
+							}
+						}
+					)
+
 
 					ipcRenderer.on( 'gerar:relatorio:pecas:response', ( err, item )=>
 					{
@@ -247,6 +314,40 @@
 										onClick: function()
 										{
 											$( '#relatorio_pecas_modal' ).removeClass( 'is-active' )
+										}
+									} 
+								}
+							);
+						}
+						else
+						{
+							Bulma().alert
+							( 
+								{
+									type   : 'danger',
+									title  : 'Atenção!',
+									body   : 'Houve um erro ao gerar o relatório',
+									confirm: 'Ok'
+								}
+							);
+						}
+					} )
+
+					ipcRenderer.on( 'gerar:relatorio:pedidos:response', ( err, item )=>
+					{
+						if( item )
+						{
+							Bulma().alert
+							( 
+								{
+									type   : 'success',
+									title  : 'Relatório gerado com sucesso',
+									confirm:
+									{
+										label: 'Ok',
+										onClick: function()
+										{
+											$( '#relatorio_pedidos_modal' ).removeClass( 'is-active' )
 										}
 									} 
 								}

@@ -1,6 +1,5 @@
 
 import PdfPrinter from 'pdfmake';
-import { title } from 'process';
 import { PecasTransaction } from '../model/PecasTransaction';
 import { Relatorio } from './Relatorio';
 const fs = require( 'fs' );
@@ -10,16 +9,16 @@ class RelatorioPecas
 			Relatorio
 
 {
-	public async build(path:null|string)
+	public async build(path:null | string): Promise<any> 
 	{
 		var printer = new PdfPrinter( Relatorio.FONTS );
 		var docDefinition = 
 		{
 			pageSize: 'A4',
+			pageMargins: 72,
 			content: 
 			[
 				{
-					margin:[ 0, 20,0,0 ],
 					table: 
 					{
 						headerRows: 1,

@@ -352,3 +352,13 @@ ipcMain.on
 		win.webContents.send( 'gerar:relatorio:pecas:response', result );
 	}
 );
+
+ipcMain.on
+( 
+	'gerar:relatorio:pedidos',
+	async( err, item )=>
+	{
+		let result = await ReportsController.generateReport( ReportsController.RELATORIO_PEDIDOS , item.path);
+		win.webContents.send( 'gerar:relatorio:pedidos:response', result );
+	}
+)

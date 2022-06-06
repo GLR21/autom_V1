@@ -66,7 +66,7 @@ class PecasTransaction
 	}
 	async get(parameter:any)
 	{
-		var query = `SELECT * from ${ PecasTransaction.TABLE_NAME } where id= ${parameter.id} and ref_marca = ${parameter.marca}`;
+		var query = `SELECT * from ${ PecasTransaction.TABLE_NAME } where id= ${parameter.id}`;
 		return await this.query(  query ).
 		then
 		( 
