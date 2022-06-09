@@ -63,7 +63,7 @@ class PedidosTransaction
 		throw new Error("Method not implemented.");
 	}
 
-	public async getAll()
+	public async getAll( param?:any|null )
 	{
 		return await super.query( 'SELECT id, total, status from pm_pedidos;' )
 		.then
@@ -74,22 +74,40 @@ class PedidosTransaction
 
 				await Promise.all( res.rows.map( async( pedidoObj )=>
 				{
+
 					var pedido = new Pedidos( pedidoObj.id,  0 , pedidoObj.total, [], pedidoObj.status  );
 
-					var pm_pedidos_pecas = await super.query( `SELECT ref_peca, quantidade from pm_pedidos_pecas where ref_pedido = ${pedido.id}` );
+					var query_pessoa = `SELECT ref_pessoa from pm_pedidos_pessoa where ref_pedido = ${pedido.id}`;
 
-					pm_pedidos_pecas.rows.forEach
-					(
-						element => 
-						{
-							pedido.pecasPedido.push( new PecasPedidos( element.ref_peca, element.quantidade ) );
-						}
-					);
-					
-					var id_pessoa = await super.query( `SELECT ref_pessoa from pm_pedidos_pessoa where ref_pedido = ${pedido.id}` );
-					pedido.ref_pessoa = id_pessoa.rows[0].ref_pessoa;	
+					var id_pessoa;
 
-					pedidos.push( pedido );
+					if( typeof param != 'undefined' )
+					{
+						query_pessoa+= ` AND ref_pessoa = ${ param }`;
+						id_pessoa = await super.query( query_pessoa );
+					}
+					else
+					{
+						id_pessoa = await super.query( query_pessoa );
+					}
+
+					if( id_pessoa.rows.length > 0 )
+					{
+	
+						var pm_pedidos_pecas = await super.query( `SELECT ref_peca, quantidade from pm_pedidos_pecas where ref_pedido = ${pedido.id}` );
+	
+						pm_pedidos_pecas.rows.forEach
+						(
+							element => 
+							{
+								pedido.pecasPedido.push( new PecasPedidos( element.ref_peca, element.quantidade ) );
+							}
+						);
+						
+						pedido.ref_pessoa = id_pessoa.rows[0].ref_pessoa;
+	
+						pedidos.push( pedido );
+					}
 
 				} ) );
 

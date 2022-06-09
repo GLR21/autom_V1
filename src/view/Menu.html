@@ -92,12 +92,12 @@
 					</div>
 					<div class="tile is-parent">
 						<article class="tile is-child">
-							<a href="" class="button is-large is-info is-light" style="width: 12em;">
+							<button id="relatorio_pedidos_cliente_btn" class="button is-large is-info is-light" style="width: 12em;">
 								<img style="width: 1em;height: 1em;"  src="../../resources/images/chart-pie.png" alt="" srcset="">
 								<p class="ml-2">
 									Pedidos por cliente
 								</p>
-							</a>
+							</button>
 						</article>
 						<article class="tile is-child">
 							<a href="" id="pedido_peca" class="button is-large is-info is-light" style="width: 12em;">
@@ -165,6 +165,39 @@
 			</div>
 		</div>
 
+		<div id="relatorio_pedidos_cliente_modal"  class="modal">
+			<div class="modal-background"></div>
+			<div class="modal-content has-background-white py-5 px-5">
+				<h3 class="title mb-6">Relatório de Pedidos por cliente</h3>
+				<p class="control has-icons-left">
+					<input id="relatorio_pedidos_cliente_file_name" name="relatorio_pedidos_cliente_file_name" type="text" class="input is-rounded" placeholder="Nome">
+					<span class="icon is-small is-left">
+						<i class="fa-solid fa-folder"></i>	
+					</span>
+				</p>
+				<p class="control has-icons-left">
+					
+					<input id="relatorio_pedidos_cliente_path" name="relatorio_pedidos_cliente_path" type="text" class="input is-rounded" placeholder="Selecione o diretório onde deseja salvar o relatório" readonly>
+					<span class="icon is-small is-left">
+						<i class="fa-solid fa-folder"></i>	
+					</span>
+				</p>
+				<div class="control has-icons-left">
+					<div class="select is-rounded is-expanded">
+						<select  name="relatorio_pedidos_cliente_select_client" id="relatorio_pedidos_cliente_select_client">
+							<option value="0" selected>
+								Selecione um cliente
+							</option>
+						</select>
+					</div>
+					<div class="icon is-left">
+						<i class="fa-solid fa-user"></i>
+					</div>
+					<button id="relatorio_pedidos_cliente_modal_gnrt_report" style="width: 100%;" class="button mt-5 is-success  is-expanded">Gerar relatório</button> 
+				</div>
+			</div>
+		</div>
+
 		<!--End_Modals-->
 		<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
 		<script>
@@ -177,12 +210,33 @@
 			const { ipcRenderer } = electron;
 			const relatorio_pecas_btn = $( '#relatorio_pecas_btn' );
 			const relatorio_pedidos_btn = $( '#relatorio_pedidos_btn' );
+			const relatorio_pedidos_cliente_btn = $( '#relatorio_pedidos_cliente_btn' );
 			var open_dir;			
 
 			$( document ).ready
 			(
 				()=>
 				{
+
+					ipcRenderer.send('load:lista:pessoas');
+					ipcRenderer.on( 'load:lista:pessoas:success', ( err, item )=>
+					{
+						if( Array.isArray( item )  )
+						{
+							item.forEach
+							(
+								cliente =>
+								{
+									var option = document.createElement( 'option' );
+									$( option ).val(  cliente.id );
+									$( option ).text( cliente.nome );
+									$( '#relatorio_pedidos_cliente_select_client' ).append( option );
+								}
+							)
+						}
+					} );
+
+
 					$( '#relatorio_pecas_btn' ).click
 					(
 						()=>
@@ -200,6 +254,15 @@
 							modal.addClass( 'is-active' );
 						}
 					)
+
+					$( '#relatorio_pedidos_cliente_btn' ).click
+					(
+						()=>
+						{
+							var modal = $( `#`+relatorio_pedidos_cliente_btn.attr( 'id' ).replace( 'btn', 'modal' ) );
+							modal.addClass( 'is-active' );
+						}
+					);
 
 					$( document ).keydown( ( e )=>
 					{
@@ -233,6 +296,14 @@
 						()=>
 						{
 							ipcRenderer.send( 'open:dir', { target:'relatorio_pedidos_path' } );
+						}
+					)
+
+					$( '#relatorio_pedidos_cliente_path' ).click
+					(
+						()=>
+						{
+							ipcRenderer.send( 'open:dir', { target:'relatorio_pedidos_cliente_path' } );
 						}
 					)
 
@@ -282,6 +353,33 @@
 								name = name.replace( /\s/g ,'_' );								
 								let path = $('#relatorio_pedidos_path').val() +'/' + ( name.indexOf( '.' ) > 0 ? name.replace( name.substring( name.indexOf( '.' ) ), '' ) : name) + '.pdf';
 								ipcRenderer.send( 'gerar:relatorio:pedidos', { path:path } );
+							}
+							else
+							{
+								Bulma().alert
+								( 
+									{
+										type   : 'danger',
+										title  : 'Atenção!',
+										body   : 'Deve ser informado o nome do arquivo e o diretório onde deseja salvar.',
+										confirm: 'Ok'
+									}
+								);
+							}
+						}
+					)
+
+					$( '#relatorio_pedidos_cliente_modal_gnrt_report' ).click
+					(
+						()=>
+						{
+							
+							if( $('#relatorio_pedidos_cliente_path').val() != '' && $('#relatorio_pedidos_cliente_file_name').val() != '' )
+							{
+								let name = $('#relatorio_pedidos_cliente_file_name').val();
+								name = name.replace( /\s/g ,'_' );								
+								let path = $('#relatorio_pedidos_cliente_path').val() +'/' + ( name.indexOf( '.' ) > 0 ? name.replace( name.substring( name.indexOf( '.' ) ), '' ) : name) + '.pdf';
+								ipcRenderer.send( 'gerar:relatorio:pedidos:clientes', { path:path, ref_pessoa: $( '#relatorio_pedidos_cliente_select_client option' ).filter( ':selected' ).val()  } );
 							}
 							else
 							{
@@ -348,6 +446,40 @@
 										onClick: function()
 										{
 											$( '#relatorio_pedidos_modal' ).removeClass( 'is-active' )
+										}
+									} 
+								}
+							);
+						}
+						else
+						{
+							Bulma().alert
+							( 
+								{
+									type   : 'danger',
+									title  : 'Atenção!',
+									body   : 'Houve um erro ao gerar o relatório',
+									confirm: 'Ok'
+								}
+							);
+						}
+					} )
+
+					ipcRenderer.on( 'gerar:relatorio:pedidos:clientes:response', ( err, item )=>
+					{
+						if( item )
+						{
+							Bulma().alert
+							( 
+								{
+									type   : 'success',
+									title  : 'Relatório gerado com sucesso',
+									confirm:
+									{
+										label: 'Ok',
+										onClick: function()
+										{
+											$( '#relatorio_pedidos_cliente_modal' ).removeClass( 'is-active' )
 										}
 									} 
 								}

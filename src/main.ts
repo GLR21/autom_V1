@@ -358,7 +358,18 @@ ipcMain.on
 	'gerar:relatorio:pedidos',
 	async( err, item )=>
 	{
-		let result = await ReportsController.generateReport( ReportsController.RELATORIO_PEDIDOS , item.path);
+		let result = await ReportsController.generateReport( ReportsController.RELATORIO_PEDIDOS , item);
 		win.webContents.send( 'gerar:relatorio:pedidos:response', result );
+	}
+)
+
+ipcMain.on
+(
+	'gerar:relatorio:pedidos:clientes',
+	async( err, item )=>
+	{
+		item.ref_pessoa = item.ref_pessoa > 0 ? item.ref_pessoa : undefined;
+		let result = await ReportsController.generateReport( ReportsController.RELATORIO_PEDIDOS , item);
+		win.webContents.send( 'gerar:relatorio:pedidos:clientes:response', result );
 	}
 )

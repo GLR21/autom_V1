@@ -11,14 +11,14 @@ class RelatorioPedidos
 	extends
 		Relatorio
 {
-	public async build(path: string | null): Promise<any> 
+	public async build(param:any): Promise<any> 
 	{
 		var printer = new PdfPrinter( Relatorio.FONTS );
 
 		let pedidostransaction = new PedidosTransaction();
 		let pessoatransaction  = new PessoaTransaction();
 
-		let pedidosArr = await pedidostransaction.getAll();
+		let pedidosArr = await pedidostransaction.getAll( param.ref_pessoa );
 
 		var docDefinition = 
 		{
@@ -50,11 +50,12 @@ class RelatorioPedidos
 				tableBody.push( [ { text:`Pedido: ${pedido.id}`, bold: true, border:[ false, false, false, false ] }  ] );
 				tableBody.push( [ { text:`Cliente: ${pedido.ref_pessoa}-${pessoa.nome}`, bold: true, border:[ false, false, false, false ] }  ] );
 				tableBody.push( [ produtos] );
+				tableBody.push( [ { text: `Total: R$${pedido.total?.toString().replace( '.',',' )}`, bold:true, margin: [ 0, 0, 0, 20 ] } ] )
 			} ) )
 
 			docDefinition['header'] = Relatorio.HEADER;
 			var pdfDoc = printer.createPdfKitDocument( docDefinition );
-			pdfDoc.pipe( fs.createWriteStream( `${path}` ) );
+			pdfDoc.pipe( fs.createWriteStream( `${param.path}` ) );
 			pdfDoc.end();
 		
 			return true;
