@@ -18,7 +18,7 @@ class RelatorioPedidos
 		let pedidostransaction = new PedidosTransaction();
 		let pessoatransaction  = new PessoaTransaction();
 
-		let pedidosArr = await pedidostransaction.getAll( param.ref_pessoa );
+		let pedidosArr = await pedidostransaction.getAll( param );
 
 		var docDefinition = 
 		{
@@ -42,16 +42,24 @@ class RelatorioPedidos
 		
 		try
 		{
-			await Promise.all( pedidosArr.map( async(  pedido:Pedidos )=>
+			if( pedidosArr.length > 0 )
 			{
-				let pessoa = await pessoatransaction.get( pedido.ref_pessoa );
-				let produtos = await this.generateInnerTable( pedido );
+				await Promise.all( pedidosArr.map( async(  pedido:Pedidos )=>
+				{
+					let pessoa = await pessoatransaction.get( pedido.ref_pessoa );
+					let produtos = await this.generateInnerTable( pedido );
+	
+					tableBody.push( [ { text:`Pedido: ${pedido.id}`, bold: true, border:[ false, false, false, false ] }  ] );
+					tableBody.push( [ { text:`Cliente: ${pedido.ref_pessoa}-${pessoa.nome}`, bold: true, border:[ false, false, false, false ] }  ] );
+					tableBody.push( [ produtos] );
+					tableBody.push( [ { text: `Total: R$${pedido.total?.toString().replace( '.',',' )}`, bold:true, margin: [ 0, 0, 0, 20 ] } ] )
+				} ) )
+			}
+			else
+			{
+				tableBody.push( [ { text:`Não há pedidos para este filtro.`, bold: true, border:[ false, false, false, false ] }  ] )
+			}
 
-				tableBody.push( [ { text:`Pedido: ${pedido.id}`, bold: true, border:[ false, false, false, false ] }  ] );
-				tableBody.push( [ { text:`Cliente: ${pedido.ref_pessoa}-${pessoa.nome}`, bold: true, border:[ false, false, false, false ] }  ] );
-				tableBody.push( [ produtos] );
-				tableBody.push( [ { text: `Total: R$${pedido.total?.toString().replace( '.',',' )}`, bold:true, margin: [ 0, 0, 0, 20 ] } ] )
-			} ) )
 
 			docDefinition['header'] = Relatorio.HEADER;
 			var pdfDoc = printer.createPdfKitDocument( docDefinition );

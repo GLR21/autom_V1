@@ -15,7 +15,7 @@ class PedidosTransaction
 
 	async store(parameter: Pedidos)
 	{
-		var insert = `Insert into pm_pedidos ( total ) values ( ${ parameter.total } ) RETURNING id`;
+		var insert = `Insert into pm_pedidos ( total,status ) values ( ${ parameter.total }, ${ parameter.status } ) RETURNING id`;
 		let update = false;
 
 		if( parameter.id )
@@ -78,24 +78,49 @@ class PedidosTransaction
 					var pedido = new Pedidos( pedidoObj.id,  0 , pedidoObj.total, [], pedidoObj.status  );
 
 					var query_pessoa = `SELECT ref_pessoa from pm_pedidos_pessoa where ref_pedido = ${pedido.id}`;
+					var query_peca   = `SELECT ref_peca, quantidade from pm_pedidos_pecas where ref_pedido = ${pedido.id}`;
 
 					var id_pessoa;
+					var pm_pedidos_pecas;
 
 					if( typeof param != 'undefined' )
 					{
-						query_pessoa+= ` AND ref_pessoa = ${ param }`;
-						id_pessoa = await super.query( query_pessoa );
+						
+						if( param.hasOwnProperty('ref_pessoa') )
+						{
+							if( typeof param.ref_pessoa != 'undefined'  )
+							{
+								query_pessoa+= ` AND ref_pessoa = ${ param.ref_pessoa }`;
+							}
+
+							id_pessoa = await super.query( query_pessoa );
+							pm_pedidos_pecas = await super.query( query_peca );
+						}
+						else if( param.hasOwnProperty( 'ref_peca' ) )
+						{
+							if( typeof param.ref_peca != 'undefined' )
+							{
+								query_peca+= ` AND ref_peca = ${ param.ref_peca }`
+							}
+
+							id_pessoa = await super.query( query_pessoa );
+							pm_pedidos_pecas = await super.query( query_peca );
+						}
+						else
+						{
+							pm_pedidos_pecas = await super.query( query_peca );
+							id_pessoa = await super.query( query_pessoa );	
+						}
+						
 					}
 					else
 					{
+						pm_pedidos_pecas = await super.query( query_peca );
 						id_pessoa = await super.query( query_pessoa );
 					}
 
-					if( id_pessoa.rows.length > 0 )
+					if( id_pessoa.rows.length > 0 && pm_pedidos_pecas.rows.length > 0  )
 					{
-	
-						var pm_pedidos_pecas = await super.query( `SELECT ref_peca, quantidade from pm_pedidos_pecas where ref_pedido = ${pedido.id}` );
-	
 						pm_pedidos_pecas.rows.forEach
 						(
 							element => 
@@ -103,10 +128,11 @@ class PedidosTransaction
 								pedido.pecasPedido.push( new PecasPedidos( element.ref_peca, element.quantidade ) );
 							}
 						);
-						
+							
 						pedido.ref_pessoa = id_pessoa.rows[0].ref_pessoa;
-	
+		
 						pedidos.push( pedido );
+
 					}
 
 				} ) );

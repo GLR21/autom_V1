@@ -373,3 +373,16 @@ ipcMain.on
 		win.webContents.send( 'gerar:relatorio:pedidos:clientes:response', result );
 	}
 )
+
+ipcMain.on
+(
+	'gerar:relatorio:pedidos:peca',
+	async( err, item )=>
+	{
+		item.ref_peca = item.ref_peca > 0 ? item.ref_peca : undefined;
+		let result = await ReportsController.generateReport( ReportsController.RELATORIO_PEDIDOS , item);
+		win.webContents.send( 'gerar:relatorio:pedidos:peca:response', result );
+	}
+)
+
+
