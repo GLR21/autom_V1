@@ -28,6 +28,8 @@
     "bulma-extensions": "^6.2.7",
     "bulma-toast": "^2.4.1",
     "datatables-bulma": "^1.0.1",
+    "datatables.net": "^1.12.1",
+    "datatables.net-bulma": "^1.0.1",
     "dotenv": "^16.0.0",
     "intl-tel-input": "^17.0.16",
     "jquery": "^3.6.0",

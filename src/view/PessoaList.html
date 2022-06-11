@@ -8,9 +8,16 @@
 	<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
 	<link rel="stylesheet" href="../../resources/css/bulma-switch.min_working.css">
 	<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+	<link rel="stylesheet" href="../../node_modules/datatables.net-bulma/css/dataTables.bulma.css">
 	<title>Autom</title>
 </head>
 <body>
+	<style>
+		table.dataTable tbody tr:hover
+		{
+   			background-color:#00d1b279 !important;
+		}
+	</style>
 	<nav class="navbar has-shadow is-primary" role="navigation" >
 		<div class="navbar-brand">
 			<a href="Menu.html" class="navbar-item">
@@ -69,24 +76,28 @@
 		</div>
 	</nav>
 
-	<table class="table is-fullwidth is-hoverable">
-		<thead>
-			<tr>
-				<th></th>
-				<th>Cód.</th>
-				<th>Nome</th>
-				<th>Email</th>
-				<th></i>Telefone</th>
-			</tr>
-		</thead>
-		<tbody id="lista_pessoas_body">
-			
-		</tbody>
-	</table>
+	<section class="section">
+		<table id="pessoas_table" class="table is-fullwidth is-hoverable is-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Cód.</th>
+					<th>Nome</th>
+					<th>Email</th>
+					<th></i>Telefone</th>
+				</tr>
+			</thead>
+			<tbody id="lista_pessoas_body">
+				
+			</tbody>
+		</table>
+	</section>
 	<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
 	<script>
 		window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
 		window.$ = window.jQuery;
+
+		require( "../../node_modules/datatables.net-bulma" )( window, $ );
 	</script>
 	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
 	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
@@ -102,68 +113,71 @@
 		(
 			()=>
 			{
+				var table = $( '#pessoas_table' ).DataTable
+				(
+					{
+						paging: true,
+        				ordering: true,
+						"bInfo" : false,
+						"language":
+						{
+							"sSearch": "Pesquisar:",
+							"sEmptyTable": "Ops! Não há nada aqui.",
+							"paginate": 
+							{
+								"next":       "Próximo",
+								"previous":   "Anterior"
+							}
+							
+						},
+						"dom": 'frtip'
+
+        
+					}
+				);
+
 				ipcRenderer.send( 'load:lista:pessoas' );
 				ipcRenderer.on( 'load:lista:pessoas:success', ( err,item )=>
 				{
-					let tbody = $( '#lista_pessoas_body' );
-
 					item.forEach( element => 
 					{
-						var icon        = document.createElement( 'i' );
+						let icon        = document.createElement( 'i' );
 						$( icon ).addClass( 'fas fa-edit' );
 						$( icon ).attr( 'style', 'color: #00d1b2;pointer-events: all;cursor: pointer;'  );
 						$( icon ).attr( 'id', `${element.id}` );
 						$( icon ).attr( 'onclick', 'onEdit(this)' );
 
-						var icon_delete = document.createElement( 'i' );
+						let icon_delete = document.createElement( 'i' );
 						$( icon_delete ).addClass( 'fa fa-trash' );
-						$( icon_delete ).attr( 'style', 'color: #FF3860;pointer-events: all;cursor: pointer;'  );
+						$( icon_delete ).attr( 'style', 'color: #FF3860;pointer-events: all;cursor: pointer;margin-left: 1em;'  );
 						$( icon_delete ).attr( 'onclick', `onDelete('${ element.id }_${ element.tipo_pessoa }')` );						
 						
-						var p_nome      = document.createElement( 'p');
+						let p_nome      = document.createElement( 'p');
 						$( p_nome ).addClass( 'ml-2' );
 						$( p_nome ).append( element.nome );
 						
-						var td_edit    = document.createElement( 'TD' );
+						let td_edit    = document.createElement( 'TD' );
 						$( td_edit ).attr( 'style', 'border:none;' )
 						td_edit.appendChild( icon );
 
-						var td_delete  = document.createElement( 'TD' );
+						let td_delete  = document.createElement( 'TD' );
 						$( td_delete ).attr( 'style', 'border:none;' )
 						td_delete.appendChild( icon_delete );
 
-						var th_button  = document.createElement( 'TH' );
+						let th_button  = document.createElement( 'TD' );
 						th_button.appendChild( td_edit );
 						th_button.appendChild( td_delete );
 						
-						var th_codigo = document.createElement( 'TH' );
-						th_codigo.innerText   = element.id;
-						
-						var th_nome    = document.createElement( 'TH' );
-						$( th_nome ).append( p_nome );
-						
 						if( element.sys_auth == process.env.PM_AUTH_ADMIN )
 						{
-							var admin_icon = document.createElement( 'I' );
+							let admin_icon = document.createElement( 'I' );
 							$( admin_icon ).addClass( 'fa-solid fa-crown ml-2' );
 							$( admin_icon ).attr( 'style', 'color:  #ffd700' );
 							$( admin_icon ).appendTo( p_nome );
 						}
-						
-						var td_email   = document.createElement( 'TD' );
-						td_email.innerText    = element.email;
-						
-						var td_telefone   = document.createElement( 'TD' );
-						td_telefone.innerText = element.telefone;
 
-						var row = document.createElement( 'TR' );
-						row.appendChild( th_button ); 
-						row.appendChild( th_codigo );
-						row.appendChild( th_nome );
-						row.appendChild( td_email );
-						row.appendChild( td_telefone );
+						table.row.add( [ th_button.outerHTML, element.id, p_nome.outerHTML, element.email,element.telefone ] ).draw();
 
-						tbody.append( row );
 					});
 				} );
 
