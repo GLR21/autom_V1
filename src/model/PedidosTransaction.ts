@@ -54,13 +54,64 @@ class PedidosTransaction
 		);
 
 	}
-	delete(parameter: Number)
+	async delete(parameter: any)
 	{
-		throw new Error("Method not implemented.");
+		return await Promise.all
+		( 
+			[
+				await super.query( `DELETE from pm_pedidos_pecas where ref_pedido = ${ parameter }` ),
+				await super.query( `DELETE from pm_pedidos_pessoa where ref_pedido = ${ parameter }` ),
+				await super.query( `DELETE from pm_pedidos where id = ${ parameter }` ),
+			]
+		)
+		.then
+		( 
+			()=>
+			{
+				return true;
+			} 
+		)
+		.catch
+		( 
+			( e )=>
+			{
+				console.log( e );
+				return false;
+			} 
+		);
 	}
-	get(parameter: any)
+
+	async get(parameter: any)
 	{
-		throw new Error("Method not implemented.");
+		return await super.query( `SELECT * from pm_pedidos where id = ${ parameter.id }` )
+		.then
+		(
+			async( res )=>
+			{
+				return await Promise.all( res.rows.map( async( pedidoReturn )=>
+				{
+
+
+					let pedido = new Pedidos( pedidoReturn.id, 0, pedidoReturn.total, [], pedidoReturn.status );
+
+					let pecas = await super.query( `SELECT * from pm_pedidos_pecas where ref_pedido = ${ pedidoReturn.id }` );
+
+					pecas.rows.forEach
+					(
+						element => 
+						{
+							pedido.pecasPedido.push( new PecasPedidos( element.ref_peca, element.quantidade ) );
+						}
+					);
+
+					let ref_pessoa = await super.query( `select ref_pessoa from pm_pedidos_pessoa where ref_pedido = ${ pedido.id }` );
+
+					pedido.ref_pessoa = ref_pessoa.rows[0].ref_pessoa;
+
+					return pedido;
+				} ) );
+			}
+		);
 	}
 
 	public async getAll( param?:any|null )
@@ -139,6 +190,46 @@ class PedidosTransaction
 
 				return pedidos;
 			}
+		);
+	}
+
+	async conclude( param:any )
+	{
+		return await super.query( `UPDATE pm_pedidos set status = 3 where id = ${ param }` )
+		.then
+		( 
+			()=>
+			{ 
+				return true; 
+			} 
+		)
+		.catch
+		( 
+			( e )=>
+			{
+				console.log( e );
+				return false;
+			} 
+		);
+	}
+
+	async cancel( param:any )
+	{
+		return await super.query( `UPDATE pm_pedidos set status = 1 where id = ${ param }` )
+		.then
+		( 
+			()=>
+			{ 
+				return true; 
+			} 
+		)
+		.catch
+		( 
+			( e )=>
+			{
+				console.log( e );
+				return false;
+			} 
 		);
 	}
 	

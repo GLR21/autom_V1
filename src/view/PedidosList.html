@@ -1,0 +1,324 @@
+<html lang="pt-BR" style="overflow-y: hidden;">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="../../node_modules/intl-tel-input/build/css/intlTelInput.css">
+	<link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css">
+	<link rel="stylesheet" href="../../resources/css/bulma-switch.min_working.css">
+	<link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+	<link rel="stylesheet" href="../../node_modules/datatables.net-bulma/css/dataTables.bulma.css">
+	<title>Autom</title>
+	
+</head>
+<body >
+	<style>
+		table.dataTable tbody tr:hover
+		{
+   			background-color:#00d1b279 !important;
+		}
+	</style>
+	<nav class="navbar has-shadow is-primary" role="navigation" >
+		<div class="navbar-brand">
+			<a href="Menu.html" class="navbar-item">
+				<figure class="is-rounded">
+					<img src="../../resources/images/logo.png" alt="">
+				</figure>
+			</a>
+		</div>
+		<div class="navbar-menu">
+			<div class="navbar-start">
+				<div class="navbar-item has-dropdown is-hoverable">
+					<div class="navbar-link">
+						Menu
+					</div>
+					<div class="navbar-dropdown">
+						<a class="navbar-item" href="PessoaList.html" >
+							<i class="fa-solid fa-users"></i>
+							<p class="ml-2">
+								Pessoas
+							</p>
+						</a>
+						<a class="navbar-item" href="PessoaForm.html"> 
+							<i class="fa-solid fa-user" ></i>
+							<p class="ml-2" >
+								Cadastro de pessoas
+							</p>
+						</a>
+						<a class="navbar-item" href="PecasList.html" >
+							<i class="fa-solid fa-gears"></i>
+							<p class="ml-2">
+								Peças
+							</p>
+						</a>
+						<a class="navbar-item" href="PecasForm.html" >
+							<i class="fa-solid fa-gear"></i>
+							<p class="ml-2">
+								Cadastro de peças
+							</p>
+						</a>
+						<a class="navbar-item" href="PedidosForm.html" >
+							<i class="fa-solid fa-basket-shopping"></i>
+							<p class="ml-2">
+								Pedido
+							</p>
+						</a>
+						<a class="navbar-item" href="PedidosList.html" >
+							<i class="fa-solid fa-receipt"></i>
+							<p class="ml-2">
+								Pedidos
+							</p>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="navbar-end">
+				<div class="navbar-item is-centered">
+					<span style="pointer-events: all ;cursor: pointer;" id="logout" class="icon pr-5" title="Logout">
+						<i class="fa-solid fa-power-off is-large"></i>
+					</span>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<section class="section">
+		<table id="pedidos_table" class="table is-fullwidth is-hoverable is-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Cód.</th>
+					<th>Cliente</th>
+					<th>Total</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</section>
+	<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+	<script>
+		window.jQuery = require("../../node_modules/jquery/dist/jquery.min.js");
+		window.$ = window.jQuery;
+
+		require( "../../node_modules/datatables.net-bulma" )( window, $ );
+	</script>
+	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput-jquery.js"></script>
+	<script src="../../node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
+	<script src="../../node_modules/intl-tel-input/build/js/utils.js"></script>
+	<script src="../../resources/JS/view.js"></script>
+	<script src="../../node_modules/bulma-toast/dist/bulma-toast.min.js"></script>
+	<script src="../../node_modules/@vizuaalog/bulmajs/dist/alert.js"></script>
+	<script>
+		const electron = require('electron');
+		const { ipcRenderer } = electron;
+
+		$( document ).ready
+		(
+			()=>
+			{
+				var table = $( '#pedidos_table' ).DataTable
+				(
+					{
+						paging: true,
+        				ordering: true,
+						"bInfo" : false,
+						"language":
+						{
+							"sSearch": "Pesquisar:",
+							"sEmptyTable": "Ops! Não há nada aqui.",
+							"paginate": 
+							{
+								"next":       "Próximo",
+								"previous":   "Anterior"
+							}
+						},
+						"dom": 'frtip'
+        
+					}
+				);
+
+				ipcRenderer.send( 'load:lista:pedidos' );
+				ipcRenderer.on
+				( 
+					'load:lista:pedidos:success',
+					( err,item )=>
+					{
+						if( Array.isArray( item ) && Array( item ).length > 0 )
+						{
+							item.forEach
+							(
+								pedido=>
+								{
+									let span_action = document.createElement( 'span' );
+
+									let edit        = document.createElement( 'i' );
+									$( edit ).addClass( 'fas fa-edit' );
+									$( edit ).attr( 'style', 'color: #00d1b2;pointer-events: all;cursor: pointer;margin-left: 0.5em'  );
+									$( edit ).attr( 'id', `${pedido.id}` );
+									$( edit ).attr( 'onclick', `onEdit( ${pedido.id} )` );
+									$( edit ).attr( 'title', 'Editar pedido' );
+
+									let action_delete = document.createElement( 'i' );
+									$( action_delete ).addClass( 'fa fa-trash' );
+									$( action_delete ).attr( 'style', 'color: #FF3860;pointer-events: all;cursor: pointer;margin-left: 0.5em'  );
+									$( action_delete ).attr( 'onclick', `onDelete(${ pedido.id })` );
+									$( action_delete ).attr( 'title', 'Deletar pedido' );
+
+									let conclude    = document.createElement( 'i' );
+									$( conclude ).addClass( 'fa-solid fa-check is-success' );
+									$( conclude ).attr( 'style', 'color:#23d160;pointer-events: all;cursor: pointer;' )
+									$( conclude ).attr( 'onclick', `onConclude(${ pedido.id })` );
+									$( conclude ).attr( 'title', 'Concluir pedido' );
+
+									let cancel      = document.createElement( 'i' );
+									$( cancel ).addClass( 'fa-solid fa-ban' );
+									$( cancel ).attr( 'style', 'color:#e62222;pointer-events: all;cursor: pointer;margin-left: 0.5em' )
+									$( cancel ).attr( 'onclick', `onCancel(${ pedido.id })` );
+									$( cancel ).attr( 'title', 'Cancelar pedido' );
+
+									
+									
+
+									let statusTag = document.createElement( 'span' );
+
+									switch( pedido.status )
+									{
+										case 1:
+											$( statusTag ).addClass( 'tag is-danger' );
+											$( statusTag ).text( 'Cancelado' );
+											$( span_action ).append( action_delete );
+										break;
+										case 2:
+											$( statusTag ).addClass( 'tag is-warning' );
+											$( statusTag ).text( 'Pendente' );
+											$( span_action ).append( conclude );
+											$( span_action ).append( cancel );
+											$( span_action ).append( edit );
+											$( span_action ).append( action_delete );
+											
+										break;
+										case 3:
+											$( statusTag ).addClass( 'tag is-success' );
+											$( statusTag ).text( 'Concluido' );
+											$( span_action ).append( action_delete );
+										break;
+									}
+
+									table.row.add( [ span_action.outerHTML ,pedido.id, pedido.pessoa.nome, Intl.NumberFormat( 'pt-BR', { style: 'currency', currency: 'BRL' }).format( pedido.total ), statusTag.outerHTML ] ).draw();
+								}
+							)
+						}	
+					}
+				);
+
+				ipcRenderer.on
+				(
+					'lista:pedidos:delete:success',
+					( err, item )=>
+					{
+						if( item )
+						{
+							bulmaToast.toast({ message: 'Registro deletado com sucesso', type: 'is-success', duration: 50000, closeOnClick: true, offsetTop: 15 });
+							reload();
+						}
+						else
+						{
+							bulmaToast.toast({ message: 'Ocorreu um erro, favor entrar em contato com o suporte.', type: 'is-danger', duration: 50000, closeOnClick: true, offsetTop: 15 });
+							reload();
+						}
+					}
+				)
+
+				ipcRenderer.on
+				(
+					'lista:pedidos:conclude:success',
+					( err, item )=>
+					{
+						if( item )
+						{
+							bulmaToast.toast({ message: 'Pedido concluido com sucesso', type: 'is-success', duration: 50000, closeOnClick: true, offsetTop: 15 });
+							reload();
+						}
+						else
+						{
+							bulmaToast.toast({ message: 'Ocorreu um erro, favor entrar em contato com o suporte.', type: 'is-danger', duration: 50000, closeOnClick: true, offsetTop: 15 });
+							reload();
+						}
+					}
+				)
+
+				ipcRenderer.on
+				(
+					'lista:pedidos:cancel:success',
+					( err, item )=>
+					{
+						if( item )
+						{
+							bulmaToast.toast({ message: 'Pedido cancelado com sucesso', type: 'is-success', duration: 50000, closeOnClick: true, offsetTop: 15 });
+							reload();
+						}
+						else
+						{
+							bulmaToast.toast({ message: 'Ocorreu um erro, favor entrar em contato com o suporte.', type: 'is-danger', duration: 50000, closeOnClick: true, offsetTop: 15 });
+							reload();
+						}
+					}
+				)
+				
+			}
+		)
+
+		function onEdit( id )
+		{
+			location.assign( `PedidosForm.html?pedido_id=${ id };` );
+			
+		}
+
+		function onDelete( id )
+		{
+			Bulma().alert
+			(
+				{
+					type   : 'warning',
+					title  : 'Deseja realmente apagar este registro?',
+					body   : 'Ao apagar este registro, todos os dados associados a ele também serão apagados.',
+					confirm: 
+					{
+						label: 'Confirmar',
+						onClick: function()
+						{
+							ipcRenderer.send( 'lista:pedidos:delete', id );
+						}
+					},
+					cancel:
+					{
+						label:'Cancelar'
+					}
+				}
+			)
+			
+		}
+
+		function onConclude( id )
+		{
+			ipcRenderer.send( 'lista:pedidos:conclude', id );
+		}
+
+		function onCancel( id )
+		{
+			ipcRenderer.send( 'lista:pedidos:cancel', id );
+			
+		}
+
+		function reload()
+		{
+			location.reload();
+		}
+
+	</script>
+	<script src="../../resources/JS/autum.js"></script>
+</body>
+</html>

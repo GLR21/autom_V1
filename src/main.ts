@@ -331,7 +331,7 @@ ipcMain.on
 		);
 
 		transaction = new PedidosTransaction();
-		await transaction.store( new Pedidos( null, item.ref_pessoa, item.total, pecas ) )
+		await transaction.store( new Pedidos( item.id, item.ref_pessoa, item.total, pecas ) )
 		.then
 		(
 			( res )=>
@@ -385,4 +385,65 @@ ipcMain.on
 	}
 )
 
+ipcMain.on
+(
+	'load:lista:pedidos',
+	async( err, item )=>
+	{
+		transaction = new PedidosTransaction();
+		let pessoaTransaction = new PessoaTransaction();
+		let result = await transaction.getAll();
+		await Promise.all( result.map( async( pedido )=>
+		{
+			pedido.pessoa = await pessoaTransaction.get( pedido.ref_pessoa );
+		} ) );
+
+		win.webContents.send( 'load:lista:pedidos:success', result ); 
+	}
+);
+
+
+ipcMain.on
+(
+	'lista:pedidos:delete',
+	async( err, item )=>
+	{
+		transaction = new PedidosTransaction();
+		let result = await transaction.delete( <Number>item );
+		win.webContents.send( 'lista:pedidos:delete:success', result );
+	}
+);
+
+ipcMain.on
+( 
+	'lista:pedidos:conclude',
+	async( err, item )=>
+	{
+		transaction = new PedidosTransaction();
+		let result = await transaction.conclude( <Number>item );
+		win.webContents.send( 'lista:pedidos:conclude:success', result );
+	}
+)
+
+ipcMain.on
+( 
+	'lista:pedidos:cancel',
+	async( err, item )=>
+	{
+		transaction = new PedidosTransaction();
+		let result = await transaction.cancel( <Number>item );
+		win.webContents.send( 'lista:pedidos:cancel:success', result );
+	}
+)
+
+ipcMain.on
+( 
+	'edit:list:pedidos',
+	async( err, item )=>
+	{
+		transaction = new PedidosTransaction();
+		let result = await transaction.get( <Number>item );
+		win.webContents.send( 'edit:list:pedidos:success', result[0] );
+	}
+ )
 

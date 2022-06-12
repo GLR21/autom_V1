@@ -54,6 +54,12 @@
 							<a class="navbar-item" href="PedidosForm.html" >
 								<i class="fa-solid fa-basket-shopping"></i>
 								<p class="ml-2">
+									Pedido
+								</p>
+							</a>
+							<a class="navbar-item" href="PedidosList.html" >
+								<i class="fa-solid fa-receipt"></i>
+								<p class="ml-2">
 									Pedidos
 								</p>
 							</a>
@@ -73,6 +79,11 @@
 		<div class="container is-fluid">
 			<div class="column is-half is-offset-one-quarter">
 				<h1 class="title mt-5" >Pedido</h1>
+				<div id="pedido_id_field" class="field">
+					<div class="control">
+						<input type="text" name="pedido_id" id="pedido_id" class="input" style="width: 10%;cursor: default;pointer-events: none;" disabled>
+					</div>
+				</div>
 			</div>
 			<div class="column is-half is-offset-one-quarter  ">
 				<div class="column is-half ">
@@ -126,11 +137,12 @@
 			const electron = require('electron');
 			const { ipcRenderer } = electron;
 			count = 1;
+			const queryVariables = new URLSearchParams(window.location.search);
 			
 			var quantidade  =document.getElementsByName( 'quantidade' );
 			
 
-			function increment( target )
+			function increment( target, params = null )
 			{
 				++count;
 				var control = document.createElement( 'DIV' );
@@ -144,14 +156,24 @@
 
 				var select  = document.createElement( 'SELECT' );
 				$( select ).addClass( 'select is-small' );
+				$( select ).attr( 'id', `pecas_select_${count}` );
 
 				var default_option = document.createElement( 'OPTION' );
 				$( default_option ).text( 'Selecione um produto' );
 				$( default_option ).attr( 'value', 0 );
 
 				$( select ).append( default_option );
+				
+				if( params != null )
+				{
+					load_pecas( select, params.ref_peca );
+				}
+				else
+				{
+					load_pecas( select );
+				}
 
-				load_pecas( select );
+				
 
 				$( field ).append( select );
 
@@ -205,13 +227,20 @@
 				$( field ).append( div_space );
 
 				$( target ).append( control );
+
+				if( params != null )
+				{
+					$( input_1 ).val( params.quantidade );
+					setTimeout( function(){  $( input_1 ).trigger( 'change' ) }, 50 );
+				}
 			}
 			
 			$(document).ready
 			(
 				function()
 				{
-
+					$( '#pedido_id_field' ).hide();
+					
 					load_pecas( document.getElementById( 'pecas_select_1' ) );
 					
 					setInputFilter( document.getElementsByName( 'quantidade' )[0] , function(value)
@@ -288,6 +317,7 @@
 								var total= 0;
 								var pedido = 
 								{
+									id  			: $( '#pedido_id' ).val() != '' ? $( '#pedido_id' ).val(): null,
 									ref_pessoa: $( '#peca_cliente_id' )[0].value,
 									pecas:[]
 								};
@@ -315,6 +345,50 @@
 						}
 					);
 
+
+					if( queryVariables.get( 'pedido_id' ) )
+					{
+						ipcRenderer.send( 'edit:list:pedidos', { id: queryVariables.get( 'pedido_id' )}  );
+						ipcRenderer.on
+						(  
+							'edit:list:pedidos:success',
+							( arr, item )=>
+							{
+								if( typeof item != 'undefined' )
+								{
+									$( '#pedido_id_field' ).show();
+									$( '#pedido_id' ).val( item.id );
+
+									$( '#peca_cliente_id' ).val( item.ref_pessoa );
+
+									let container = document.getElementById( 'container' );
+
+									let pecas_loaded = 1;
+
+									item.pecasPedido.forEach
+									(
+										pedido=>
+										{
+
+											if( pecas_loaded == 1 )
+											{
+												$( '#pecas_select_1' ).val( pedido.ref_peca );
+												let quantidade = $( 'input[name=\"quantidade\"]' );
+												quantidade.val( pedido.quantidade )
+												quantidade.trigger( 'change' );
+												pecas_loaded++;
+											}
+											else
+											{
+												increment( container, pedido );
+											}
+										}
+
+									)
+								}
+							}
+						)
+					}
 				}
 			);
 
@@ -324,7 +398,7 @@
 				{
 					bulmaToast.toast({ message: 'Registro salvo com sucesso', type: 'is-success', duration: 4000, closeOnClick: true, offsetTop: 15 });
 					location.reload();
-					//setTimeout( location.assign( 'PessoaList.html' ), 4500 );
+					setTimeout( location.assign( 'PedidosList.html' ), 4500 );
 				}
 				else
 				{
@@ -333,7 +407,7 @@
 				}
 			} );
 
-			function load_pecas( target )
+			function load_pecas( target, selected = null )
 			{
 				ipcRenderer.send( 'load:lista:pecas' );
 				let eventTarget =  ipcRenderer.on
@@ -352,6 +426,10 @@
 							}
 						);
 
+						if( selected != null )
+						{
+							$( target ).val( selected );
+						}
 						eventTarget.removeAllListeners( 'load:lista:pecas:success' );
 					}
 				);
