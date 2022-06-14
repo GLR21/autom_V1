@@ -7,7 +7,7 @@ class DBConnector
 
 	private constructor()
     {
-		const dbconfig  = JUtil.returnJSONFromFile( 'resources/db.json' );
+		const dbconfig  = JUtil.returnJSONFromFile( 'resources/db_dumb.json' );
 		const client =  new Client
 		(
 			{

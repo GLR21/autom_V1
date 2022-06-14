@@ -1,5 +1,6 @@
 
 import fs from 'fs';
+import os from 'os';
 import crypto from 'crypto';
 
 class JUtil
@@ -31,7 +32,7 @@ class JUtil
 
 	static returnJSONFromFile( path:string )
 	{
-		return JSON.parse( fs.readFileSync( 'resources/db.json' ).toString() );
+		return JSON.parse( fs.readFileSync( path ).toString() );
 	}
 
 	static hashString( string_to_hash:any, algorithm_type:string )
@@ -56,6 +57,26 @@ class JUtil
 		);
 
 		return files;
+	}
+
+	static updateEnvFile( key:any, value:string ,path:string )
+	{
+		const ENV_VARS= fs.readFileSync( path, 'utf8' ).split( os.EOL );
+
+		const target = <any>ENV_VARS.indexOf
+		(
+			<any>ENV_VARS.find
+			(
+				(line) => 
+				{
+					return line.match(new RegExp(key))
+				}
+			)
+		);
+
+		ENV_VARS.splice( target, 1, `${key}=${value}` );
+
+		fs.writeFileSync( path, ENV_VARS.join( os.EOL ) );
 	}
 }
 

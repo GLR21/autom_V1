@@ -1,9 +1,8 @@
 import * as electron from 'electron';
 import * as remoteMain from '@electron/remote/main';
-const { app, BrowserWindow , ipcMain } = electron ;
+const { app, BrowserWindow , ipcMain } = electron;
 import { JUtil  } from "./util/JUtil";
 import 'dotenv/config'
-import { Pessoa } from "./objects/Pessoa";
 import { PessoaTransaction } from "./model/PessoaTransaction";
 import { TipoPerfilTransaction } from "./model/TipoPerfilTransaction";
 import { MarcasTransaction } from "./model/MarcasTransaction";
@@ -16,7 +15,9 @@ import { PedidosTransaction } from "./model/PedidosTransaction";
 import { Pedidos } from "./objects/Pedidos";
 import { dialog } from 'electron';
 import { ReportsController } from './reports/ReportsController';
+import { Client } from "pg";
 const util = JUtil;
+const pgtools = require( 'pgtools' );
 
 
 
@@ -38,6 +39,13 @@ async function createWindow()
 		
 	splash.loadFile( "src/view/auth/splash.html");
 	splash.center();
+
+	if( process.env.DB_CREATED == 'false' )
+	{
+		await dbbuild();
+		JUtil.updateEnvFile( "DB_CREATED", 'true', '.env' );
+	}
+
 	setTimeout
 	( 
 		function()
@@ -63,16 +71,59 @@ async function createWindow()
 			win.center();
 			win.show();
 			win.maximize();	
-
 			splash.close();
 
 		}
 	, 5000 );
 }
 
-async function build()
+async function dbbuild()
 {
-	return performance.now() * 20;
+	const db_config = JUtil.returnJSONFromFile( 'resources/db_dumb.json' );
+
+	const script    = JUtil.getFileContents( 'resources/dump_script.sql' ).toString();
+
+	let config = 
+	{
+		user: db_config.user,
+		password: db_config.password,
+		host: db_config.host,
+		port: db_config.port
+	}
+
+	await pgtools.createdb( config, db_config.database, function( err, res )
+	{
+		if( err )
+		{
+			console.error( err );
+			process.exit( -1 );
+		}
+
+	} );
+
+	let client = new Client
+	(
+		{
+			user: db_config.user,
+			password: db_config.password,
+			host: db_config.host,
+			database: db_config.database,
+			port: db_config.port
+		}
+	)
+
+	await client.connect();
+
+	await Promise.all
+	( 
+		[
+			await client.query( script.toString() ),
+			await client.end()
+		]
+	).then( ()=>
+	{
+		console.log(  'db_created' );
+	} );
 }
 
 app.whenReady().then
